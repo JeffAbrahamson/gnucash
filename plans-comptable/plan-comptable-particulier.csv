@@ -1,0 +1,201 @@
+type,nom_complet,nom,code,description,couleur,notes,mnemo_produit,domaine_produit,cache,taxe,virtuel
+BANK,Non soldé-EUR,Non soldé-EUR,,,,,EUR,CURRENCY,F,F,F
+BANK,Orphelin-EUR,Orphelin-EUR,,,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX,1-CAPITAUX,1,COMPTES DE PATRIMOINE,,Bilan d'ouverture,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:10-SITUATION,10-SITUATION,10,Situation nette patrimoniale,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:10-SITUATION:101-Capital Initial,101-Capital Initial,100,Valeur nette patrimoniale,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:10-SITUATION:101-Capital Initial:Capital €,Capital €,1011,Situation initiale EUR,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:10-SITUATION:101-Capital Initial:Capital Fr.-,Capital Fr.-,1012,Situation initiale CHF,,,CHF,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:10-SITUATION:101-Capital Initial:Capital £,Capital £,1013,Situation initiale GBP,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:10-SITUATION:101-Capital Initial:Capital $,Capital $,1014,Situation intiale USD,,,USD,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:10-SITUATION:102-Correction de valeur,102-Correction de valeur,102,Correction de la valeur nette patrimoniale,,Au début de l'année,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:10-SITUATION:103-Fonds avec droit de reprise,103-Fonds avec droit de reprise,103,Legs et donations avec contrepartie d'actifs immobilisés assortis d'une obligation ou d'une condition,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:11-EXCÉDENTOU DÉFICIT,11-EXCÉDENTOU DÉFICIT,11,Excédent ou déficit de l'année,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:12-SITUATION NETTE,12-SITUATION NETTE,12,Situation nette de l'année,,(=10+11),EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:15-PROVISIONS,15-PROVISIONS,15,Provisions,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:16-EMPRUNTS,16-EMPRUNTS,16,Emprunts et dettes assimilées,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:16-EMPRUNTS:164-Emprunts bancaires,164-Emprunts bancaires,164,Emprunts auprès des établissements de crédit,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:16-EMPRUNTS:164-Emprunts bancaires:Emprunts immobiliers,Emprunts immobiliers,1641,Emprunts immobiliers,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:16-EMPRUNTS:164-Emprunts bancaires:Emprunts mobiliers,Emprunts mobiliers,1643,Emprunts finaçant des biens mobiliers,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:16-EMPRUNTS:164-Emprunts bancaires:Emprunts consommation,Emprunts consommation,1644,Emprunts consommation,,,EUR,CURRENCY,F,F,F
+EQUITY,1-CAPITAUX:16-EMPRUNTS:168-Autres emprunts,168-Autres emprunts,168,Autres emprunts,,,EUR,CURRENCY,F,F,T
+EQUITY,1-CAPITAUX:16-EMPRUNTS:168-Autres emprunts:Emprunts à un tiers,Emprunts à un tiers,1681,Emprunts à un tiers,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS,2-IMMOBILISATIONS,2,"BIENS, AVOIRS",,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS,21-BIENS CORPORELS,21,Immobilisations / Biens corporels,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:211-Terrains,211-Terrains,211,Terrains,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:212-Aménagements,212-Aménagements,212,Aménagements des terrains,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:213-Constructions,213-Constructions,213,Constructions immobilières,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements,218-Investissements,218,Investissements mobiliers personnel,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Véhicules,Véhicules,2182,Véhicules de transport,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Informatique,Informatique,2183,"Matériel informatique, téléphonie..",,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Mobilier,Mobilier,2184,Mobilier,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Mobilier:Meubles,Meubles,28141,Meubles meublant,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Mobilier:Électroménager,Électroménager,28142,Gros appareils ménagers,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:21-BIENS CORPORELS:218-Investissements:Animaux,Animaux,2185,Animaux,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES,27-FINANCIÈRES,27,Autres immobilisations financières,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:274-Prêts,274-Prêts,274,Prêts,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:274-Prêts:Prêts €,Prêts €,2741,Prêt d'argent à un tiers,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:275-Dépôts,275-Dépôts,275,Dépôts et cautionnements versés,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées,276-Créances immobilisées,276,Autres créances immobilisées,,,EUR,CURRENCY,F,F,T
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Participation-Intéressement,Participation-Intéressement,2761,Fonds de participation et intéressements bloqués,,,EUR,CURRENCY,F,F,F
+BANK,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:PEE-PERCO,PEE-PERCO,2762,Plan d'Épargne Entreprise et Retraite,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Assurance-vie,Assurance-vie,2763,Assurance-Vie,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Placements disponibles,Placements disponibles,2764,Placements disponibles,,,EUR,CURRENCY,F,F,T
+BANK,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Placements disponibles:Plans d'Épargne,Plans d'Épargne,27641,Plans d'Épargne,,,EUR,CURRENCY,F,F,T
+BANK,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Placements disponibles:Plans d'Épargne:PEP,PEP,27641,Plan d'Épargne Populaire,,,EUR,CURRENCY,F,F,F
+BANK,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Placements disponibles:Plans d'Épargne:PEL,PEL,276412,Plan d'Épargne Logement,,,EUR,CURRENCY,F,F,F
+ASSET,2-IMMOBILISATIONS:27-FINANCIÈRES:276-Créances immobilisées:Livrets,Livrets,2765,Comptes sur livrets,,(comptes à détailler),EUR,CURRENCY,F,F,F
+ASSET,3-STOCKS,3-STOCKS,3,Stocks et en-cours,,,EUR,CURRENCY,F,F,T
+LIABILITY,4-TIERS,4-TIERS,4,COMPTES DE TIERS,,,EUR,CURRENCY,F,F,T
+LIABILITY,4-TIERS:40-FOURNISSEURS,40-FOURNISSEURS,40,Fournisseurs et comptes rattachés,,,EUR,CURRENCY,F,F,F
+LIABILITY,4-TIERS:41-REVENUS À PERCEVOIR,41-REVENUS À PERCEVOIR,41,Revenus à percevoir et comptes associés,,,EUR,CURRENCY,F,F,F
+LIABILITY,4-TIERS:44-ÉTAT,44-ÉTAT,44,État et collectivités publiques,,,EUR,CURRENCY,F,F,F
+LIABILITY,4-TIERS:46-DIVERS,46-DIVERS,46,Débiteurs et créditeurs divers,,,EUR,CURRENCY,F,F,F
+LIABILITY,4-TIERS:47-TRANSITOIRES,47-TRANSITOIRES,47,Comptes transitoires ou d'attente,,,EUR,CURRENCY,F,F,F
+LIABILITY,4-TIERS:48-RÉGULARISATION,48-RÉGULARISATION,48,Comptes de régularisation,,,EUR,CURRENCY,F,F,F
+BANK,5-COMPTES,5-COMPTES,5,COMPTES FINANCIERS,,,EUR,CURRENCY,F,F,T
+ASSET,5-COMPTES:50-VALEURS MOBILIÈRES,50-VALEURS MOBILIÈRES,50,Valeurs mobilières de placement,,,EUR,CURRENCY,F,F,T
+ASSET,5-COMPTES:50-VALEURS MOBILIÈRES:507-SICAV & FCP,507-SICAV & FCP,507,"SICAV & FCP, Bons du trésor, Bons de caisse à court-terme",,,EUR,CURRENCY,F,F,F
+BANK,5-COMPTES:51-BANQUES,51-BANQUES,51,"Banques, établissements financiers et assimilés",,,EUR,CURRENCY,F,F,T
+BANK,5-COMPTES:51-BANQUES:512-Banques,512-Banques,512,Banques,,,EUR,CURRENCY,F,F,T
+BANK,5-COMPTES:51-BANQUES:512-Banques:Banque 1,Banque 1,5121,Banque 1,,,EUR,CURRENCY,F,F,F
+CREDIT,5-COMPTES:51-BANQUES:512-Banques:Carte Bleue,Carte Bleue,5122,Carte Bleue rattaché à la banque 1,,,EUR,CURRENCY,F,F,F
+ASSET,5-COMPTES:51-BANQUES:512-Banques:Paypal,Paypal,5125, ,,,EUR,CURRENCY,F,F,F
+BANK,5-COMPTES:51-BANQUES:514-Banque postale,514-Banque postale,514,La Banque postale,,,EUR,CURRENCY,F,F,T
+BANK,5-COMPTES:51-BANQUES:514-Banque postale:CCP,CCP,5141,,,,EUR,CURRENCY,F,F,F
+BANK,5-COMPTES:51-BANQUES:514-Banque postale:Carte bleue CCP,Carte bleue CCP,5142,Carte bleue liée au CCP,,,EUR,CURRENCY,F,F,F
+CASH,5-COMPTES:53-CAISSE,53-CAISSE,53,Caisse,,,EUR,CURRENCY,F,F,T
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €,531 Caisse en €,531,Caisse en Euros,,,EUR,CURRENCY,F,F,T
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €:Espèces €,Espèces €,5311,Espèces en EUR,,,EUR,CURRENCY,F,F,F
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €:Caisse en devises,Caisse en devises,5314,Caisse en devises étrangères,,,EUR,CURRENCY,F,F,T
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €:Caisse en devises:Espèces CHF,Espèces CHF,53141,Espèces en Franc Suisse,,,CHF,CURRENCY,F,F,F
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €:Caisse en devises:Espèces USD,Espèces USD,53143,Espèces en Dollar US,,,USD,CURRENCY,F,F,F
+CASH,5-COMPTES:53-CAISSE:531 Caisse en €:Caisse en devises:Espèces GBP,Espèces GBP,53145,Espèces en Livre Anglaise,,,GBP,CURRENCY,F,F,F
+ASSET,5-COMPTES:53-CAISSE:532-Coffre,532-Coffre,532,Coffre (autres placements liquides),,,EUR,CURRENCY,F,F,T
+BANK,5-COMPTES:58-VIREMENTS INTERNES,58-VIREMENTS INTERNES,58,Virements internes,,,EUR,CURRENCY,F,F,F
+BANK,5-COMPTES:59-DÉPRÉCIATION,59-DÉPRÉCIATION,59,Dépréciation des comptes financiers,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES,6-CHARGES,6,COMPTES DE CHARGE,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS,60-ACHATS,60,Achats - Dépenses courantes,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien,601-Quotidien,601,Dépenses courantes – vie quotidienne,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Alimentation,Alimentation,6011,Dépenses d'alimentation,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Alimentation:Épicerie,Épicerie,60111,Épicerie,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Alimentation:Restaurant,Restaurant,60112,Restaurant,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Animaux Domestiques,Animaux Domestiques,6012,Dépenses d'animaux,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Animaux Domestiques:Nourriture,Nourriture,60121,Nourriture des animaux,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Animaux Domestiques:Soins,Soins,60122,Soins des animaux,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Bureau,Bureau,6013,Dépenses de bureau,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Habillement,Habillement,6014,Dépenses d'habillement,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Maison,Maison,6015,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Frais Professionnels,Frais Professionnels,6016,Frais non remboursés,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:601-Quotidien:Sécurité,Sécurité,6017,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:602-Véhicules,602-Véhicules,602,Dépenses – Véhicules personnels,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:602-Véhicules:Carburant,Carburant,6021,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:602-Véhicules:Entretien,Entretien,6022,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:602-Véhicules:Parking,Parking,6023,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:602-Véhicules:Péages,Péages,6024,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:604-Formation,604-Formation,604,Dépenses de formation,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:604-Formation:Éducation,Éducation,606,Dépenses d’éducation,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:605-Santé,605-Santé,605,Dépenses nettes – santé,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:606-Fluides,606-Fluides,606,Achats non stockés de matière et fournitures,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:60-ACHATS:606-Fluides:Eau,Eau,6061,"Eau chaude, eau froide",,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:606-Fluides:Electricité,Electricité,6062,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:606-Fluides:Gaz,Gaz,6063,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:607-Loisirs,607-Loisirs,607,Dépenses - loisirs,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:60-ACHATS:609-Remises,609-Remises,609,"Rabais, remises et ristournes obtenus sur achats ou dépenses courantes",,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES,61-SERVICES,61,Services extérieurs,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:61-SERVICES:613-Locations,613-Locations,613,Locations,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:61-SERVICES:613-Locations:Loyer,Loyer,6132,Loyer à payer,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:614-Charges,614-Charges,614,Charges locatives et de copropriété ,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:61-SERVICES:614-Charges:Charges,Charges,6141,Charges communes,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:614-Charges:Chauffage,Chauffage,6142,Charges de chauffage,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:615-Entretien,615-Entretien,615,Entretiens et réparations,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:61-SERVICES:615-Entretien:Matériaux,Matériaux,6151,Matériaux,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:615-Entretien:Services,Services,6152,Réparations,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:616-Assurances,616-Assurances,616,Primes d'assurances,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:61-SERVICES:616-Assurances:Habitation,Habitation,6161,Assurance habitation,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:616-Assurances:Auto,Auto,6162,Assurance auto,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:616-Assurances:Resp. Civile,Resp. Civile,6163,Responsabilité civile,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:61-SERVICES:616-Assurances:Divers,Divers,6164,Autres assurances,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES,62-AUTRES,62,Autres services,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:622-Honoraires,622-Honoraires,622,Rémunérations d'intermédiaires et honoraires,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:622-Honoraires:Annonces,Annonces,6222,Commissions et courtages sur ventes,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:622-Honoraires:Honoraires,Honoraires,6226,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:622-Honoraires:Frais d'actes,Frais d'actes,6227,Frais d'actes et de contentieux ,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:623-Relations,623-Relations,623,"Publicité, publications, relations publiques",,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:623-Relations:Associations,Associations,6231,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:623-Relations:Cadeaux,Cadeaux,6234 ,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:624-Transports,624-Transports,624,Transports de biens et transports collectifs,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:624-Transports:Transports collectifs,Transports collectifs,6247,"Bus, train..",,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:625-Missions,625-Missions,625,"Déplacements, missions et réceptions",,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:625-Missions:Déplacements,Déplacements,6251,Voyages et déplacements,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:625-Missions:Réceptions,Réceptions,6257,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:626-Postes & Télécom,626-Postes & Télécom,626,Frais postaux et frais de télécommunications,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:626-Postes & Télécom:Frais d'envoi,Frais d'envoi,6261,Frais postaux,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:626-Postes & Télécom:Téléphone,Téléphone,6262,Frais de télécommunications,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:627-Services bancaires,627-Services bancaires,627,Services bancaires et assimilés ,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:62-AUTRES:627-Services bancaires:Frais sur titres,Frais sur titres,6271,"Frais sur titres (achat, vente, garde) ",,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:627-Services bancaires:Émissions d'emprunt,Émissions d'emprunt,6272,Commissions et frais sur émission d'emprunts,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:627-Services bancaires:Autres Frais,Autres Frais,6278,Autres frais et commissions sur prestations de services,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:62-AUTRES:628-Divers,628-Divers,628,Dépenses diverses,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:63-IMPÔTS,63-IMPÔTS,63,"Impôts, taxes et versements assimilés",,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:63-IMPÔTS:Revenu,Revenu,631,Impôt sur le revenu,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:63-IMPÔTS:Prélèvement libératoire,Prélèvement libératoire,632,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:63-IMPÔTS:Habitation,Habitation,635,Taxe d’habitation,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:63-IMPÔTS:Impôts Divers,Impôts Divers,636,Impôts divers,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:63-IMPÔTS:TVA,TVA,637,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL,64-PERSONNEL,64,Charges de personnel,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations,646-Cotisations,646,Cotisations sociales personnelles,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Maladie,Maladie,6461,Sécurité sociale et mutuelles,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Maladie:Sécurité Sociale,Sécurité Sociale,64611,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Maladie:Mutuelle,Mutuelle,64612,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Maladie:Prélèvement social,Prélèvement social,64614,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Retraite,Retraite,6462,Cotisations de retraite,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Retraite:Retraite,Retraite,64621,Cotisations de Retraite,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:CSG-CRDS,CSG-CRDS,6463,Cotisation sociales,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:CSG-CRDS:CSG Déductible,CSG Déductible,64631,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:CSG-CRDS:CSG Non Déduc.,CSG Non Déduc.,64632,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:CSG-CRDS:CRDS,CRDS,64633,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:CSG-CRDS:Contribution additionelle,Contribution additionelle,64635,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Chômage,Chômage,6464,Cotisations chômage,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:64-PERSONNEL:646-Cotisations:Chômage:Solidarité,Solidarité,,,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:65-PATRIMONIAL,65-PATRIMONIAL,65,Charges patrimoniales,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:65-PATRIMONIAL:651-Pensions,651-Pensions,651,Pensions versées,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:65-PATRIMONIAL:655-Locatif,655-Locatif,655,Charges concernant les immeubles locatifs,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:65-PATRIMONIAL:658-Divers,658-Divers,658,Charges diverses de patrimoine,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:66-FINANCIÈRES,66-FINANCIÈRES,66,Charges financières,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:66-FINANCIÈRES:661-Intérêts,661-Intérêts,661,Charges d'intérêts et frais financiers sur emprunt,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:66-FINANCIÈRES:666-Change,666-Change,666,Pertes de change,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:66-FINANCIÈRES:667-Cessions de valeurs mobilières,667-Cessions de valeurs mobilières,667,Charges nettes sur cessions de valeurs mobilières de placement $,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:66-FINANCIÈRES:668-Autres,668-Autres,668,Autres charges financières,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:67-EXCEPTIONNEL,67-EXCEPTIONNEL,67,Charges exceptionnelles,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:67-EXCEPTIONNEL:671-Opérations patrimoniales,671-Opérations patrimoniales,671,Charges exceptionnelles sur opérations patrimoniales,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:67-EXCEPTIONNEL:672-Entretien,672-Entretien,672,Gros entretien des résidences principales et secondaires,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:67-EXCEPTIONNEL:675-Ventes d'actifs,675-Ventes d'actifs,675,Valeurs comptables des éléments d'actif cédés,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:68-AMORTISSEMENTS,68-AMORTISSEMENTS,68,Dotations aux amortissements et aux provisions,,,EUR,CURRENCY,F,F,T
+EXPENSE,6-CHARGES:68-AMORTISSEMENTS:681-Amortissements,681-Amortissements,681,Dotations aux amortissements sur immobilisations incorporelles et corporelles,,,EUR,CURRENCY,F,F,F
+EXPENSE,6-CHARGES:68-AMORTISSEMENTS:686-Dépréciations,686-Dépréciations,686,Provisions pour dépréciation des éléments financiers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS,7-REVENUS,7,COMPTES DE REVENUS,,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:70-REVENUS,70-REVENUS,70,REVENUS ET PRODUITS COURANTS,,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:70-REVENUS:701-Salaires,701-Salaires,701,"Traitements, salaires, pension, rentes",,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Salaire net,Salaire net,7011,Traitements et salaires,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Retraites,Retraites,7012,Pension de Retraite,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Pensions reçues,Pensions reçues,7013,Pensions reçues,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Divers,Divers,7015,Revenus divers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Primes (exo),Primes (exo),7016,Primes hors impôt,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:701-Salaires:Primes (impôt),Primes (impôt),7017,Primes imposables,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:702-Frais professionnels,702-Frais professionnels,702,Remboursements de frais professionnels,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:704-Autres revenus,704-Autres revenus,704,Revenus courants divers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:705-Revenus fonciers,705-Revenus fonciers,705,Revenus fonciers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:706-Remboursements Santé,706-Remboursements Santé,706,,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:70-REVENUS:707-Jeux,707-Jeux,707,Indemnités et produits des jeux,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:76-PRODUITS FINANCIERS,76-PRODUITS FINANCIERS,76,Produits financiers,,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:76-PRODUITS FINANCIERS:761-Actifs pro,761-Actifs pro,761,Revenus d'actifs professionnels,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:76-PRODUITS FINANCIERS:764-Autres-mobiliers,764-Autres-mobiliers,764,Autres revenus mobiliers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:77-EXCEPTIONNEL,77-EXCEPTIONNEL,77,Produits exceptionnels,,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:77-EXCEPTIONNEL:775-Cessions,775-Cessions,775,Produits des cessions d'éléments d'actifs,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:77-EXCEPTIONNEL:777-Libéralités,777-Libéralités,777,"Donations, libéralités et successions",,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:77-EXCEPTIONNEL:778-Autres produits exceptionnels,778-Autres produits exceptionnels,778,Autres produits exceptionnels,,,EUR,CURRENCY,F,F,T
+INCOME,7-REVENUS:77-EXCEPTIONNEL:778-Autres produits exceptionnels:7782-Indemnités diverses,7782-Indemnités diverses,7782,Indemnités diverses,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:77-EXCEPTIONNEL:778-Autres produits exceptionnels:7788-Divers,7788-Divers,7788,Produits exceptionnels divers,,,EUR,CURRENCY,F,F,F
+INCOME,7-REVENUS:78-REPRISES,78-REPRISES,78,Reprises sur provisions,,,EUR,CURRENCY,F,F,F
+ASSET,8-SPÉCIAUX,8-SPÉCIAUX,8,COMPTES SPÉCIAUX,,,EUR,CURRENCY,F,F,F
