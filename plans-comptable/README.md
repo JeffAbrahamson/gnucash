@@ -38,8 +38,16 @@ une autre histoire.
 Avant de commercer réellement à travailler il est bon de faire des
 essais sur un fichier "brouillon".
 
+### À noter
 
-## Plan Comtable Particulier
+Attention, ce plan comptable n'est pas parfaitement à jour avec le
+PCG, qui évolue chaque année.  (Par exemple, en 2019 le PCG a ajouté
+des comptes pour bitcoin.)  Des PR sont les bienvenus si vous êtes
+motivé.  Sinon, ce document sert d'un bon point de démarrage, car il
+est toutefois très proche au PCG.
+
+
+## Plan Comptable Particulier
 
 Merci à [Dominique
 Corbex](https://lists.gnucash.org/pipermail/gnucash-fr/2019-January/001195.html)
