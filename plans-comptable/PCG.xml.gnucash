@@ -15,24 +15,22 @@
      xmlns:bgt="http://www.gnucash.org/XML/bgt"
      xmlns:recurrence="http://www.gnucash.org/XML/recurrence"
      xmlns:lot="http://www.gnucash.org/XML/lot"
-     xmlns:cust="http://www.gnucash.org/XML/cust"
-     xmlns:job="http://www.gnucash.org/XML/job"
      xmlns:addr="http://www.gnucash.org/XML/addr"
      xmlns:owner="http://www.gnucash.org/XML/owner"
-     xmlns:taxtable="http://www.gnucash.org/XML/taxtable"
-     xmlns:tte="http://www.gnucash.org/XML/tte"
-     xmlns:employee="http://www.gnucash.org/XML/employee"
-     xmlns:order="http://www.gnucash.org/XML/order"
      xmlns:billterm="http://www.gnucash.org/XML/billterm"
      xmlns:bt-days="http://www.gnucash.org/XML/bt-days"
      xmlns:bt-prox="http://www.gnucash.org/XML/bt-prox"
-     xmlns:invoice="http://www.gnucash.org/XML/invoice"
+     xmlns:cust="http://www.gnucash.org/XML/cust"
+     xmlns:employee="http://www.gnucash.org/XML/employee"
      xmlns:entry="http://www.gnucash.org/XML/entry"
+     xmlns:invoice="http://www.gnucash.org/XML/invoice"
+     xmlns:job="http://www.gnucash.org/XML/job"
+     xmlns:order="http://www.gnucash.org/XML/order"
+     xmlns:taxtable="http://www.gnucash.org/XML/taxtable"
+     xmlns:tte="http://www.gnucash.org/XML/tte"
      xmlns:vendor="http://www.gnucash.org/XML/vendor">
-<gnc:count-data cd:type="book">1</gnc:count-data>
-<gnc:book version="2.0.0">
-<book:id type="guid">7578058f76faf1621db8f61df5b0a0cf</book:id>
-<gnc:count-data cd:type="account">647</gnc:count-data>
+<gnc:count-data cd:type="commodity">1</gnc:count-data>
+<gnc:count-data cd:type="account">611</gnc:count-data>
 <gnc:commodity version="2.0.0">
   <cmdty:space>ISO4217</cmdty:space>
   <cmdty:id>EUR</cmdty:id>
@@ -40,11 +38,17 @@
   <cmdty:quote_source>currency</cmdty:quote_source>
   <cmdty:quote_tz/>
 </gnc:commodity>
+<gnc:commodity version="2.0.0">
+  <cmdty:space>template</cmdty:space>
+  <cmdty:id>template</cmdty:id>
+  <cmdty:name>template</cmdty:name>
+  <cmdty:xcode>template</cmdty:xcode>
+  <cmdty:fraction>1</cmdty:fraction>
+</gnc:commodity>
 <gnc:account version="2.0.0">
   <act:name>Root Account</act:name>
   <act:id type="guid">04afaa1fb080f6a13fd4fde136209ea0</act:id>
   <act:type>ROOT</act:type>
-  <act:commodity-scu>0</act:commodity-scu>
 </gnc:account>
 <gnc:account version="2.0.0">
   <act:name>5_COMPTES FINANCIERS</act:name>
@@ -179,19 +183,15 @@
   <act:description>Compte bancaire</act:description>
   <act:slots>
     <slot>
-      <slot:key>notes</slot:key>
-      <slot:value type="string">N° 00028146901</slot:value>
-    </slot>
-    <slot>
-      <slot:key>online_id</slot:key>
-      <slot:value type="string">17806 00897 67688665000</slot:value>
-    </slot>
-    <slot>
       <slot:key>import-map</slot:key>
       <slot:value type="frame">
         <slot>
           <slot:key>desc</slot:key>
           <slot:value type="frame">
+            <slot>
+              <slot:key>PRELEVEMENT</slot:key>
+              <slot:value type="guid">873911abcbda2cbd5f889fe76e46b341</slot:value>
+            </slot>
             <slot>
               <slot:key>REMISE DE CHEQUE</slot:key>
               <slot:value type="guid">3167f6bbc06ed1ac3e3d1d0addbe0d25</slot:value>
@@ -199,10 +199,6 @@
             <slot>
               <slot:key>VIREMENT EMIS</slot:key>
               <slot:value type="guid">d1e80f9a8faf1c937f903ce6a0f4c47a</slot:value>
-            </slot>
-            <slot>
-              <slot:key>PRELEVEMENT</slot:key>
-              <slot:value type="guid">873911abcbda2cbd5f889fe76e46b341</slot:value>
             </slot>
           </slot:value>
         </slot>
@@ -218,12 +214,12 @@
               <slot:value type="guid">a3c96140fd6390fda7026efce42fbdbd</slot:value>
             </slot>
             <slot>
-              <slot:key>LAURE VINCENT</slot:key>
-              <slot:value type="guid">d1e80f9a8faf1c937f903ce6a0f4c47a</slot:value>
-            </slot>
-            <slot>
               <slot:key>CSERVICE PRO     N0703600088257</slot:key>
               <slot:value type="guid">873911abcbda2cbd5f889fe76e46b341</slot:value>
+            </slot>
+            <slot>
+              <slot:key>LAURE VINCENT</slot:key>
+              <slot:value type="guid">d1e80f9a8faf1c937f903ce6a0f4c47a</slot:value>
             </slot>
           </slot:value>
         </slot>
@@ -232,6 +228,14 @@
     <slot>
       <slot:key>last-num</slot:key>
       <slot:value type="string">1969796</slot:value>
+    </slot>
+    <slot>
+      <slot:key>notes</slot:key>
+      <slot:value type="string">N° 00028146901</slot:value>
+    </slot>
+    <slot>
+      <slot:key>online_id</slot:key>
+      <slot:value type="string">17806 00897 67688665000</slot:value>
     </slot>
     <slot>
       <slot:key>reconcile-info</slot:key>
@@ -3926,444 +3930,6 @@
   <act:parent type="guid">04afaa1fb080f6a13fd4fde136209ea0</act:parent>
 </gnc:account>
 <gnc:account version="2.0.0">
-  <act:name>6A_Dépenses de fonctionnement</act:name>
-  <act:id type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6A</act:code>
-  <act:parent type="guid">24411dd0de42428d53b5b796cb2cfa36</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>61_services extérieurs</act:name>
-  <act:id type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>61</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6130_Location photocopieur</act:name>
-  <act:id type="guid">a9f1e9935e339faa542ce56e2552c22e</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6130</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6150_Entretien et réparations</act:name>
-  <act:id type="guid">46f4a475a6a02bf65fe1420f4e0e2321</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6150</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6160_Prime d'assurances</act:name>
-  <act:id type="guid">c1d98ae60640cb1daf000e73865287b7</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6160</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6170_Etudes et recherches</act:name>
-  <act:id type="guid">cb4a714527837ab4557c6d207bfb23aa</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6170</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6180_Documentation</act:name>
-  <act:id type="guid">7e03997e2baf48c53918840fc54efb6a</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6180</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6111_Prestations sous-traitées</act:name>
-  <act:id type="guid">64c29ffd7bbf7b91245596a152b1371c</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6111</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6112_Travaux sous-traités</act:name>
-  <act:id type="guid">d8b55ecf0e1469811fce8bfad1394368</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6112</act:code>
-  <act:parent type="guid">810b8cbe9d6015a0edc362bcf83fff45</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6810_Dotation aux amortissements</act:name>
-  <act:id type="guid">6eb42bc40a6a83a38fa29141fc23bdab</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6810</act:code>
-  <act:slots>
-    <slot>
-      <slot:key>tax-US</slot:key>
-      <slot:value type="frame"/>
-    </slot>
-  </act:slots>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>60_Achats</act:name>
-  <act:id type="guid">ac56105cae87b6232b9ccdbed8de8563</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>60</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6060_Achat non stocké de matières et fournitures</act:name>
-  <act:id type="guid">fed6c061bbdb55d9fff1f2d5604430dc</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6060</act:code>
-  <act:parent type="guid">ac56105cae87b6232b9ccdbed8de8563</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6037_Variation de stock de marchandises</act:name>
-  <act:id type="guid">de26344d72b8fb4cbedd22c64d2b1f81</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6037</act:code>
-  <act:parent type="guid">ac56105cae87b6232b9ccdbed8de8563</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6034_Variation de stock de prestations de services</act:name>
-  <act:id type="guid">6b869cf231c528761a96ea0fb4af4c50</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6034</act:code>
-  <act:parent type="guid">ac56105cae87b6232b9ccdbed8de8563</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>62_Autres services extérieurs</act:name>
-  <act:id type="guid">e01db99df6abea8d5b8bfa56da769877</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>62</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6226_Honoraires</act:name>
-  <act:id type="guid">32d759163f5839c0bcf6298b5aa8a166</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6226</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6210_Personnel extérieur au comité</act:name>
-  <act:id type="guid">ab2c3124d054cecaf7c113ed72291cce</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6210</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6237_Publication</act:name>
-  <act:id type="guid">b1ce9222e2132f1e147c43dd0752380d</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6237</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6238_Pourboires et dons</act:name>
-  <act:id type="guid">f02fa7ddfa6f1f12e342894b4112ff36</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6238</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6250_Déplacements</act:name>
-  <act:id type="guid">dcdf3021e3d195f554bbed65945e96af</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6250</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6260_Frais postaux et frais de télécommunications</act:name>
-  <act:id type="guid">e786c2a3126db6921af0c49c30afa3c1</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6260</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6270_Services bancaires</act:name>
-  <act:id type="guid">d144db2ac0fa5055f6c2908d1ede3818</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6270</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6280_Achats divers</act:name>
-  <act:id type="guid">0ad772df676a073e2b69598f004e1d41</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6280</act:code>
-  <act:parent type="guid">e01db99df6abea8d5b8bfa56da769877</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>63_Impôts, taxes et versements assimilés</act:name>
-  <act:id type="guid">2c474dbbeb66085fc4bbb330b8267194</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>63</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6310_Impôts, taxes et versements assimilés sur rémunérations</act:name>
-  <act:id type="guid">bde848d2babeb336dea32fd3a32522c2</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6310</act:code>
-  <act:parent type="guid">2c474dbbeb66085fc4bbb330b8267194</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6370_Autres impôts, taxes et versements assimilés</act:name>
-  <act:id type="guid">39e72e5acb94967954068829b1698173</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6370</act:code>
-  <act:parent type="guid">2c474dbbeb66085fc4bbb330b8267194</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>64_Charges de personnel</act:name>
-  <act:id type="guid">4289e6a17b92f78f64dc4155b264ddfd</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>64</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6410_Rémunération du personnel du comité d'entreprise</act:name>
-  <act:id type="guid">734378b88570f5ff5862d3ad62f632c8</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6410</act:code>
-  <act:parent type="guid">4289e6a17b92f78f64dc4155b264ddfd</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6450_Charges de sécurité sociale et de prévoyance</act:name>
-  <act:id type="guid">7c40d7ed459f7bcaab7555b7dbc764a5</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6450</act:code>
-  <act:parent type="guid">4289e6a17b92f78f64dc4155b264ddfd</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6470_Autres cotisations</act:name>
-  <act:id type="guid">08b6ae5fa161af2b175e335edf76871f</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6470</act:code>
-  <act:parent type="guid">4289e6a17b92f78f64dc4155b264ddfd</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>66_Charges financières</act:name>
-  <act:id type="guid">101c2bb292e625ca4665a8ffadddf59e</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>66</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6610_Charges d'intérêts</act:name>
-  <act:id type="guid">078712d7dd64d8f3454f49c2fdaec015</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6610</act:code>
-  <act:parent type="guid">101c2bb292e625ca4665a8ffadddf59e</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6680_Autres charges financières</act:name>
-  <act:id type="guid">87e5a75439e23875d07383eb30b77f5b</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6680</act:code>
-  <act:parent type="guid">101c2bb292e625ca4665a8ffadddf59e</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>67_Charges exceptionnelles</act:name>
-  <act:id type="guid">f981886b0372c33247d91b5fbd07ff83</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>67</act:code>
-  <act:parent type="guid">d5170fcd3362089a3fb3f6a901e89b8a</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6750_Valeur comptable des éléments d'actif cédés</act:name>
-  <act:id type="guid">de371e8618884b169fa3359e1641ee50</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6750</act:code>
-  <act:parent type="guid">f981886b0372c33247d91b5fbd07ff83</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
-  <act:name>6720_Charges sur exercices antérieurs</act:name>
-  <act:id type="guid">2b37c4ab4b43cfe275808af6601996fd</act:id>
-  <act:type>EXPENSE</act:type>
-  <act:commodity>
-    <cmdty:space>ISO4217</cmdty:space>
-    <cmdty:id>EUR</cmdty:id>
-  </act:commodity>
-  <act:commodity-scu>100</act:commodity-scu>
-  <act:code>6720</act:code>
-  <act:parent type="guid">f981886b0372c33247d91b5fbd07ff83</act:parent>
-</gnc:account>
-<gnc:account version="2.0.0">
   <act:name>60_ACHATS (SAUF 603)</act:name>
   <act:id type="guid">86ef8c458879429127376d0824bfe5ec</act:id>
   <act:type>EXPENSE</act:type>
@@ -7926,7 +7492,6 @@
   <act:code>875</act:code>
   <act:parent type="guid">1ab054ece53e6da30239a47ab7bccb39</act:parent>
 </gnc:account>
-</gnc:book>
 </gnc-v2>
 
 <!-- Local variables: -->
