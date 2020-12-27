@@ -4,22 +4,32 @@
 """
 
 import argparse
+import os.path
 import piecash
 
 def main():
     """Do what we do."""
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gnucash', type=str, required=True,
-                        help='filename containing sqlite3 gnucash file')
-    parser.add_argument('--outfile', type=str, required=True,
-                        help='filename of output tex/pdf')
+    parser.add_argument('-g', '--gnucash', type=str, required=False,
+                        help='Filename containing sqlite3 gnucash file or index into accounts map')
+    parser.add_argument('-o', '--outfile', type=str, required=False,
+                        help='Filename for account list')
     args = parser.parse_args()
-    book = piecash.open_book(args.gnucash,
+    if args.gnucash is None:
+        args.gnucash=os.getenv('_gc__default_filename')
+    if args.outfile is None:
+        args.outfile=os.getenv('_gc__cache') + '/' + os.getenv('_gc__default_index')
+
+    if os.path.exists(args.gnucash):
+        book_filename = args.gnucash
+    else:
+        book_filename = os.getenv('_gc__' + args.gnucash)
+    book = piecash.open_book(book_filename,
                              readonly=True,
                              open_if_lock=True)
     with open(args.outfile, 'w') as fp_out:
         for account in book.accounts:
-            fp.write(('{n}  ({d})\n'.format(n=account.name, d=account.description)))
+            fp_out.write(('{n}  ({d})\n'.format(n=account.name, d=account.description)))
 
 if __name__ == '__main__':
     main()
