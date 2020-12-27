@@ -4,4 +4,4 @@
 # Note that this assumes that $cwd is where this script lives.
 
 cd bin
-cp gc-* $HOME/bin/
+cp gc-*py gc-*.sh $HOME/bin/
