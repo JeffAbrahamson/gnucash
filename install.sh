@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Copy scripts to my bin/ directory so that I find them.
+# Note that this assumes that $cwd is where this script lives.
+
 cd bin
-cp fin-account-list.py $HOME/bin/
-cp fin-make-ledger.sh $HOME/bin/
+cp gc-* $HOME/bin/
