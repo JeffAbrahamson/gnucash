@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+"""
+Print an extract of a single account.
+"""
+
 import argparse
 import os
 import piecash
@@ -17,23 +21,26 @@ def main():
     book = piecash.open_book(args.gnucash,
                              readonly=True,
                              open_if_lock=True)
-    account_code = args.account
-    account = book.get(piecash.Account, name=account_code)
+    account = book.get(piecash.Account, name=args.account)
+    print_account(account)
+
+def print_account(account):
+    """Pretty-print the requested account.
+    """
     if len(account.children) > 0:
         print('This is not a leaf account.')
         return
-    balance = 0.0
     table = []
     header = ['Date', 'Num', 'Descr', 'Dx', 'Cx', 'Solde']
     for split in account.splits:
         transaction = split.transaction
         value = float(split.quantity)
         if split.quantity < 0:
-            dx = '{amt:10.2f}'.format(amt=split.quantity)
-            cx = ''
+            debit_x = '{amt:10.2f}'.format(amt=split.quantity)
+            credit_x = ''
         else:
-            dx = ''
-            cx = '{amt:10.2f}'.format(amt=split.quantity)
+            debit_x = ''
+            credit_x = '{amt:10.2f}'.format(amt=split.quantity)
         date = transaction.post_date
         num = transaction.num
         # If this transaction has a portion against a bank
@@ -44,10 +51,10 @@ def main():
                                  in transaction.splits
                                  if x.account.name.startswith('512')]
         if len([state for state in bank_reconcile_state
-                if state != 'y' and state != 'v']) > 0:
+                if state not in ('y', 'v')]) > 0:
             num += '[*]'
         descr = transaction.description[:40]
-        table.append([date, num, descr, dx, cx, value])
+        table.append([date, num, descr, debit_x, credit_x, value])
     table.sort(key=lambda x: x[0])
     bal = 0
     for row in table:
@@ -57,7 +64,6 @@ def main():
 
     # Also available:
     #   split.transaction.notes
-
 
 if __name__ == '__main__':
     main()
