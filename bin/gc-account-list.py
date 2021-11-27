@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """Export a greppable text file of the flattened account hierarchy.
 """
