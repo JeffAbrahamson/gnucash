@@ -22,7 +22,8 @@ def main():
     parser.add_argument('--gnucash', type=str, required=False,
                         default=os.getenv('_gc__default_filename'),
                         help='filename containing sqlite3 gnucash file')
-    parser.add_argument('--end', type=datetime.date, required=False,
+    parser.add_argument('--end', required=False,
+                        type=datetime.date.fromisoformat,
                         default=datetime.date(datetime.date.today().year, 12, 31),
                         help='End of accounting period')
     args = parser.parse_args()
