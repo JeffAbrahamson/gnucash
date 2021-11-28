@@ -34,13 +34,13 @@ def print_account(account):
     header = ['Date', 'Num', 'Descr', 'Dx', 'Cx', 'Solde']
     for split in account.splits:
         transaction = split.transaction
-        value = float(split.quantity)
-        if split.quantity < 0:
+        value = split.quantity
+        if split.quantity > 0:
             debit_x = '{amt:10.2f}'.format(amt=split.quantity)
             credit_x = ''
         else:
             debit_x = ''
-            credit_x = '{amt:10.2f}'.format(amt=split.quantity)
+            credit_x = '{amt:10.2f}'.format(amt=-split.quantity)
         date = transaction.post_date
         num = transaction.num
         # If this transaction has a portion against a bank
