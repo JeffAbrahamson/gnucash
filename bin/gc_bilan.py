@@ -35,6 +35,8 @@ def main():
     print('\nBilan:')
     print(tabulate([[k, v] for k, v in balances.items()],
                    ['Compte', 'Montant'], 'fancy_grid'))
+    print("Total : {s}".format(
+        s=sum([v for k, v in balances.items()])))
 
 def get_balances(book, end_date):
     """Return two dicts (income and expenses) for all transactions within

@@ -40,9 +40,14 @@ def main():
     print('\nDépenses:')
     print(tabulate([[k, v] for k, v in balances['6'].items()],
                    ['Compte', 'Montant'], 'fancy_grid'))
+    print("Total : {s}".format(
+        s=sum([v for k, v in balances['6'].items()])))
     print('\nRevenu:')
     print(tabulate([[k, v] for k, v in balances['7'].items()],
                    ['Compte', 'Montant'], 'fancy_grid'))
+    print("Total : {s}".format(
+        s=sum([v for k, v in balances['7'].items()])))
+
     print("\nEmploi des contributions volontaires en nature :")
     print(tabulate([[k, v] for k, v in balances['86'].items()],
                    ['Compte', 'Montant'], 'fancy_grid'))
