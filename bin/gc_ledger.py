@@ -182,6 +182,9 @@ def print_splits(splits, format):
             )
             for entry in rows
         ]
+        if not display_rows:
+            print("No matching transactions.")
+            return
         print(
             tabulate(
                 display_rows,
@@ -199,6 +202,9 @@ def print_splits(splits, format):
             )
             for entry in rows
         ]
+        if not display_rows:
+            print("No matching transactions.")
+            return
         print(
             tabulate(
                 display_rows,
@@ -220,9 +226,9 @@ def get_args():
     )
     parser.add_argument(
         "--begin",
-        default="-30d",
+        default="-366d",
         help="Start date for transactions"
-        " (YYYY-MM-DD or offset, default: today - 30d).",
+        " (YYYY-MM-DD or offset, default: today - 366d).",
     )
     parser.add_argument(
         "--end",
@@ -258,12 +264,12 @@ def get_args():
         help="Path to the GnuCash file (SQLite3 backend).",
     )
     parser.add_argument(
-        "-v",
+        "--invert-match",
         action="store_true",
         help="Invert the sense of matching for filters.",
     )
     parser.add_argument(
-        "--verbose", action="store_true", help="Print debugging info."
+        "--verbose", "-v", action="store_true", help="Print debugging info."
     )
 
     args = parser.parse_args()
