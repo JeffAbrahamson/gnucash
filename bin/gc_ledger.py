@@ -7,13 +7,14 @@ Options permit filtering by account, date, and transaction text.
 
 """
 
-import os
 import argparse
 import datetime
+import os
 import re
-from tabulate import tabulate
-import piecash
 
+import dateparser
+import piecash
+from tabulate import tabulate
 
 GPL = """
 Copyright 2024  Jeff Abrahamson
@@ -35,19 +36,25 @@ along with gc_ledger.py.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-def parse_date_or_offset(input_str):
+def parse_date_or_offset(input_str, end_of_year=False):
     """Parse a date string or a day offset.
 
-    For example, "-5d" for 5 days ago.
-
-    This surely could benefit from a more robust parser or even using
-    a library like dateutil or dateutil.parser.
+    It understands what dateparser.parse() understands.
 
     """
-    if re.match(r"^-?\d+d$", input_str):
-        days = int(input_str[:-1])
-        return datetime.date.today() + datetime.timedelta(days=days)
-    return datetime.datetime.strptime(input_str, "%Y-%m-%d").date()
+    if re.match(r"^\d{4}$", input_str):
+        # Input is a year, return January 1st of that year
+        year = int(input_str)
+        if end_of_year:
+            return datetime.date(year, 12, 31)
+        return datetime.date(year, 1, 1)
+    return dateparser.parse(
+        input_str,
+        date_formats=(
+            "%Y-%m-%d",
+            "%d-%m-%Y",
+        ),
+    ).date()
 
 
 def filter_accounts(book, accounts, verbose):
@@ -59,6 +66,9 @@ def filter_accounts(book, accounts, verbose):
     makes sense.
 
     """
+    if verbose:
+        print(f"Book has {len(book.accounts)} accounts.")
+        print(f"Filtering accounts on regexes: {accounts}")
     if accounts:
         accounts_regex = re.compile("|".join(accounts))
         filtered_account = [
@@ -89,18 +99,22 @@ def filter_splits_by_date(begin_date, end_date, accounts, verbose):
         splits += these_splits
     if verbose:
         print(f"Found {len(splits)} matching splits.")
-    return splits
+    sorted_splits = sorted(
+        splits, key=lambda split: split.transaction.post_date
+    )
+    return sorted_splits
 
 
 def filter_transactions(splits, filters, flags, verbose):
-    """Apply grep-style filters to transaction splits"""
+    """Apply grep-style filters to transaction splits."""
     if not filters:
         if verbose:
             print("No filters specified, using all transactions.")
         return splits
     if verbose:
         print(
-            f"Applying {len(filters)} filters to {len(splits)} transactions: {filters}."
+            f"Applying {len(filters)} filters to {len(splits)}"
+            f" transactions: {filters}."
         )
     filtered_splits = [
         split
@@ -126,17 +140,8 @@ def filter_transactions(splits, filters, flags, verbose):
     return filtered_splits
 
 
-def print_splits_full(splits):
-    """Print a list of splits with full split detail.
-
-    We want to show the opposing accounts here.
-
-    """
-    print("Full split detail is not yet implemented.")
-    return
-
-
 def amount_with_currency(amount, currency, sign):
+    """Return a string with a signed amount and currency symbol."""
     amount *= sign
     if currency == "USD":
         return f"${amount:.2f}"
@@ -147,11 +152,8 @@ def amount_with_currency(amount, currency, sign):
     return f"{amount:.2f} {currency}"
 
 
-def print_splits(splits, format):
-    """Print a list of splits in a specified format."""
-    if format == "full":
-        print_splits_full(splits)
-        return
+def prepare_splits_for_printing(splits):
+    """Do some common preprocessing on splits for printing."""
     rows = []
     for split in splits:
         rows.append(
@@ -164,56 +166,143 @@ def print_splits(splits, format):
                 "value": split.value,
                 "quantity": split.quantity,
                 "currency": split.account.commodity.mnemonic,
+                "is_debit": split.is_debit,
+                "is_credit": split.is_credit,
             }
         )
+    return rows
 
-    colalign = ("left", "left", "right", "right")
-    if format == "single-line":
-        display_rows = [
+
+def print_splits_full(splits):
+    """Print a list of splits with full split detail.
+
+    This isn't quite right, as I'd like to show the splits grouped by
+    their transaction.  But it's a start, at least it shows the
+    account name.
+
+
+    """
+    rows = prepare_splits_for_printing(splits)
+    display_rows = [
+        (
+            entry["date"],
+            entry["description"],
+            entry["notes"],
+            entry["account"],
             (
-                entry["date"],
-                entry["description"],
                 amount_with_currency(entry["value"], entry["currency"], 1)
-                if split.is_debit
-                else "",
-                amount_with_currency(entry["value"], entry["currency"], -1)
-                if split.is_credit
-                else "",
-            )
-            for entry in rows
-        ]
-        if not display_rows:
-            print("No matching transactions.")
-            return
-        print(
-            tabulate(
-                display_rows,
-                tablefmt="simple",
-                colalign=colalign,
-            )
-        )
-    elif format == "double-line":
-        display_rows = [
+                if entry["is_debit"]
+                else ""
+            ),
             (
-                entry["date"],
-                entry["description"],
-                entry["notes"],
-                entry["value"],
-            )
-            for entry in rows
-        ]
-        if not display_rows:
-            print("No matching transactions.")
-            return
-        print(
-            tabulate(
-                display_rows,
-                headers=["Date", "Description", "Notes", "Value"],
-                tablefmt="simple",
-            )
+                amount_with_currency(entry["value"], entry["currency"], -1)
+                if entry["is_credit"]
+                else ""
+            ),
         )
-    else:
-        raise ValueError(f"Unrecognized format: {format}")
+        for entry in rows
+    ]
+    if not display_rows:
+        print("No matching transactions.")
+        return
+    print(
+        tabulate(
+            display_rows,
+            headers=[
+                "Date",
+                "Description",
+                "Notes",
+                "Account",
+                "Debit",
+                "Credit",
+            ],
+            tablefmt="simple",
+        )
+    )
+
+    print("Full split detail is not yet implemented.")
+    return
+
+
+def print_splits_single_line(splits):
+    """Print a list of splits with a single line per split."""
+    rows = prepare_splits_for_printing(splits)
+    colalign = ("left", "left", "right", "right")
+    display_rows = [
+        (
+            entry["date"],
+            entry["description"],
+            (
+                amount_with_currency(entry["value"], entry["currency"], 1)
+                if entry["is_debit"]
+                else ""
+            ),
+            (
+                amount_with_currency(entry["value"], entry["currency"], -1)
+                if entry["is_credit"]
+                else ""
+            ),
+        )
+        for entry in rows
+    ]
+    if not display_rows:
+        print("No matching transactions.")
+        return
+    print(
+        tabulate(
+            display_rows,
+            headers=["Date", "Description", "Debit", "Credit"],
+            tablefmt="simple",
+            colalign=colalign,
+        )
+    )
+
+
+def print_splits_double_line(splits):
+    """Print a list of splits with a double line per split."""
+    rows = prepare_splits_for_printing(splits)
+    display_rows = [
+        (
+            entry["date"],
+            entry["description"],
+            entry["notes"],
+            (
+                amount_with_currency(entry["value"], entry["currency"], 1)
+                if entry["is_debit"]
+                else ""
+            ),
+            (
+                amount_with_currency(entry["value"], entry["currency"], -1)
+                if entry["is_credit"]
+                else ""
+            ),
+        )
+        for entry in rows
+    ]
+    if not display_rows:
+        print("No matching transactions.")
+        return
+    print(
+        tabulate(
+            display_rows,
+            headers=["Date", "Description", "Notes", "Debit", "Credit"],
+            tablefmt="simple",
+        )
+    )
+
+
+def print_splits(splits, output_format):
+    """Print a list of splits in a specified format."""
+    if output_format == "full":
+        print_splits_full(splits)
+        return
+    if output_format == "single":
+        print_splits_single_line(splits)
+        return
+    if output_format == "double":
+        print_splits_double_line(splits)
+        return
+    raise ValueError(f"Unrecognized format: {output_format}")
 
 
 def get_args():
@@ -226,14 +315,19 @@ def get_args():
     )
     parser.add_argument(
         "--begin",
-        default="-366d",
+        default="-3y",
         help="Start date for transactions"
-        " (YYYY-MM-DD or offset, default: today - 366d).",
+        " (YYYY-MM-DD, YYYY (first day of year), or offset,"
+        " default: 3 years ago today).",
     )
     parser.add_argument(
         "--end",
         default="0d",
-        help="End date for transactions (YYYY-MM-DD or offset, default: today).",
+        help="End date for transactions (YYYY-MM-DD, YYYY (last day of year)"
+        " or offset, default: today).",
+    )
+    parser.add_argument(
+        "--year", default=None, help="Equavalent to --begin YYYY --end YYYY."
     )
     parser.add_argument(
         "--accounts",
@@ -243,9 +337,10 @@ def get_args():
     )
     parser.add_argument(
         "--format",
-        choices=["single-line", "double-line", "full"],
-        default="single-line",
-        help="Output format of the ledger.",
+        choices=["single", "double", "full"],
+        default="single",
+        help="Output format of the ledger (single, double, full),"
+        " default single.",
     )
     parser.add_argument(
         "-i", action="store_true", help="Ignore case in filters."
@@ -288,8 +383,13 @@ def main():
         filters = args.filters
 
     # Parse dates.
-    begin_date = parse_date_or_offset(args.begin)
-    end_date = parse_date_or_offset(args.end)
+    if args.year:
+        args.begin = args.year
+        args.end = args.year
+    begin_date = parse_date_or_offset(args.begin, end_of_year=False)
+    end_date = parse_date_or_offset(args.end, end_of_year=True)
+    if args.verbose:
+        print(f"Considering transactions from {begin_date} to {end_date}.")
 
     # Open the GnuCash database.
     book = piecash.open_book(args.file, open_if_lock=True, readonly=True)

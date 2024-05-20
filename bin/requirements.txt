@@ -1,5 +1,6 @@
-jinja2
-piecash
+dateparser
 ipython
+jinja2
 pandas
+piecash
 tabulate

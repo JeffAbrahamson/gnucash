@@ -3,11 +3,11 @@
 
 """Filter and display GnuCash account names."""
 
-import os
 import argparse
+import os
 import re
-import piecash
 
+import piecash
 
 gpl = """
 Copyright 2024  Jeff Abrahamson
@@ -90,6 +90,7 @@ def print_account_tree(account, regex, indent=0, leaf_only=False):
 
 
 def main():
+    """Do what we do."""
     parser = argparse.ArgumentParser(
         description="Filter and display GnuCash account names."
     )
