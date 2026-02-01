@@ -3,7 +3,7 @@
 `gcg` is a read-only command-line program that opens a GnuCash book stored in SQLite and provides grep/ledger-style search and reporting. It is designed to be:
 - **Fast enough for interactive use** (optional sidecar cache).
 - **Pipeline-friendly** (stable identifiers, CSV/JSON output, grep-like exit codes).
-- **Safe** (never writes to the GnuCash book; opens SQLite read-only when possible).
+- **Safe** (never writes to the GnuCash book; opens SQLite read-only).
 
 Primary implementation language: **Python**. Preferred library: **piekash** for book opening and object mapping, with **direct SQL** (or a sidecar cache) for high-throughput searches.
 
@@ -54,7 +54,7 @@ Default path is:
 4. built-in default above
 
 ### Read-only open
-Open SQLite using read-only mode when possible (SQLite URI `file:...?...mode=ro`). If read-only open fails, fallback to normal read with a warning, but still never write.
+Always open SQLite using read-only mode (SQLite URI `file:...?...mode=ro`). If read-only open fails, abort with exit code 2 and an explanatory error. Do not fall back to read-write, to avoid creating any journal/lock files.
 
 ---
 
@@ -63,7 +63,7 @@ Open SQLite using read-only mode when possible (SQLite URI `file:...?...mode=ro`
 Top-level:
 
 ```
-gcg [--book PATH] [--format table|csv|json] [--no-header] [--fields LIST]
+gcg [-i] [--book PATH] [--format table|csv|json] [--no-header] [--fields LIST]
     [--sort KEY] [--reverse] [--limit N] [--offset N]
     <command> [command options...]
 ```
@@ -89,7 +89,9 @@ Search splits/transactions for TEXT in selected fields.
 Options:
 - `--regex` : TEXT is a regular expression
 - `--case-sensitive` : default case-insensitive
-- `--in desc,memo,notes` : which fields to search (default: `desc,memo,notes` if notes exist; otherwise `desc,memo`)
+- `--in desc,memo,notes` : which fields to search.
+  - Default: `desc,memo,notes` if the book schema supports notes; otherwise `desc,memo`.
+  - Notes support is determined once per book at open time (see §15.1).
 - `--account ACCOUNT_PATTERN` : restrict to accounts whose full name matches pattern
 - `--account-regex` : account pattern is regex
 - `--no-subtree` : by default, `--account` matches include all descendant accounts
@@ -149,7 +151,11 @@ If `notes` is not present, it is ignored with a warning (but not an error).
 - Inputs are ISO `YYYY-MM-DD` in local time.
 - `--after` is **inclusive**; `--before` is **exclusive** (mirrors many CLI tools).
   - Example: `--after 2026-01-01 --before 2026-02-01` selects January 2026.
-- `--date A..B` is equivalent to `--after A --before (B + 1 day)` only if explicitly specified; otherwise it follows the same inclusive/exclusive semantics as above (implementation must document exact behavior).
+- `--date A..B` uses **inclusive start and inclusive end**, and is defined as:
+  - `--after A --before (B + 1 day)`.
+  - Example: `--date 2026-01-01..2026-01-31` selects January 2026.
+- `--date A..` is equivalent to `--after A`.
+- `--date ..B` is equivalent to `--before (B + 1 day)`.
 
 ---
 
@@ -161,8 +167,8 @@ If `notes` is not present, it is ignored with a warning (but not an error).
 
 ### Amount source
 Define precisely which numeric to use for filters and display:
-- Use **split value** in the split’s commodity/currency (GnuCash “value”), not quantity, unless an account commodity requires quantity (future flag).
-- For ledgers, value is the default.
+- Always use **split value** in the split’s commodity/currency (GnuCash “value”) for filtering and display.
+- Quantity-based display is future-only and must be gated by an explicit flag (e.g., `--quantity`) if/when added.
 
 ### Ranges
 - `--amount MIN..MAX` where either side may be omitted:
@@ -184,8 +190,9 @@ The book contains multiple currencies/commodities. `gcg` must provide a predicta
 `--currency MODE` controls what currency to display:
 
 - `auto` (default):
-  1. If an **account filter** is used (e.g., `ledger` or `grep --account ...`) and all selected accounts share a single commodity, display in that commodity.
-  2. Else if all matched splits share a single currency, display in that currency.
+  1. If an **account filter** is used (e.g., `ledger` or `grep --account ...`) and all **selected accounts** share a single commodity, display in that commodity.
+     - “Selected accounts” = the explicit account set resolved from `--account` (with subtree expansion unless `--no-subtree`).
+  2. Else if all **matched splits** in the final result set share a single currency, display in that currency.
   3. Else if the configured **base currency** is set (default `EUR`), display in base currency *when conversion is possible*; otherwise fall back to split currency per row.
 - `base` : always display in base currency when conversion is possible; otherwise fall back to original.
 - `split` : always display the split’s original currency (no conversion).
@@ -198,9 +205,9 @@ Base currency:
 ### 8.3 Showing original amounts alongside converted
 `--also-original` adds columns for the original currency and amount in addition to the chosen display currency.
 
-Example (table fields):
-- `amount_display`, `ccy_display`
-- `amount_orig`, `ccy_orig`
+Example (table fields when `--also-original` is enabled):
+- `amount` / `currency` (display currency per mode)
+- `amount_orig` / `currency_orig` (original split currency)
 
 This supports cases like:
 - ledger for a UK bank account in **GBP** (account currency),
@@ -212,15 +219,20 @@ When conversion is required:
 - If there is no exact rate on that date:
   - choose the **most recent prior** price (<= date) within a configurable lookback window (default 30 days),
   - otherwise fail conversion for that row.
+  - The lookback window is configured via `--fx-lookback DAYS` or config key `currency.fx_lookback_days`.
 
 If conversion fails:
-- In `auto`/`base`/`account` modes, fall back to original currency and mark conversion as missing (e.g., `rate = null`, `ccy_display = ccy_orig`), and optionally emit a warning summary.
+- In `auto`/`base`/`account` modes, fall back to original currency and mark conversion as missing by:
+  - setting `currency` to the original split currency, and
+  - leaving `fx_rate` empty (`null` in JSON, empty field in CSV).
+- Optionally emit a warning summary.
 - In `--strict-currency` mode (future), missing conversion becomes an error (exit code 2).
 
 ### 8.5 Rounding/precision
 - Internally use `Decimal`.
 - Display with currency-appropriate precision if known; otherwise 2 decimals.
 - JSON/CSV outputs should include both raw decimal string and currency code.
+- When conversion is attempted, also include `fx_rate` (decimal string) when available; otherwise `null`/empty.
 
 ---
 
@@ -234,11 +246,12 @@ Default split-row output fields (table/CSV/JSON):
 - `memo` (if available)
 - `notes` (if available and selected)
 - `amount` + `currency` (per currency mode)
+- `fx_rate` (present when a conversion is attempted; otherwise empty/null)
 - `tx_guid`, `split_guid`
 
 Optional:
 - `account_guid`
-- `value_orig`, `currency_orig` when `--also-original`
+- `amount_orig`, `currency_orig` when `--also-original`
 
 ### 9.2 Table output
 Use a simple tabular renderer (e.g., `tabulate` or `tabular.tabular`) with:
@@ -254,6 +267,7 @@ Two shapes:
 - Default: JSON array of objects.
 - When `--full-tx`: array of tx objects:
   - `{ "tx_guid": ..., "date": ..., "description": ..., "splits": [ ... ] }`
+  - Sorting applies to tx objects by the selected key (see §10).
 
 ---
 
@@ -262,14 +276,18 @@ Two shapes:
 ### Sorting
 `--sort` keys:
 - `date` (default), `amount`, `account`, `description`
+With `--full-tx`, sorting applies to transactions using:
+- `date`: tx posted date
+- `description`: tx description
+- `amount`: sum of displayed split amounts in the tx
 `--reverse` reverses.
 
 ### Pagination
 - `--limit N`, `--offset N` available for all list-producing commands.
 
 ### Exit codes
-- `0` : at least one match/row produced
-- `1` : no matches
+- `0` : at least one match/row produced, or successful non-search commands (`doctor`, `cache status`, `cache build/drop`)
+- `1` : no matches / GUID not found
 - `2` : error (invalid args, regex error, DB open failure, etc.)
 
 ---
@@ -370,5 +388,32 @@ gcg -i
 1. Exact mapping of “notes” in your SQLite schema/version (tx notes vs slot table). If notes live in slots, decide whether `--in notes` is supported by default or only via cache.
 2. Conversion rate lookup strategy:
    - allow forward lookup if no prior rate?
-   - lookback window length?
 3. For accounts with non-currency commodities (e.g., stocks), whether `ledger` should display quantity vs value (future flag: `--quantity`).
+
+---
+
+## 15.1 Notes field detection (normative)
+
+At book open time, determine whether the schema supports transaction notes:
+- If notes are stored as a direct transaction column in the SQLite schema, enable `notes`.
+- If notes are stored in slots, enable `notes` only if the implementation supports slot lookup (direct SQL or cache).
+- Otherwise, treat notes as unsupported and default `--in` to `desc,memo`, emitting a one-time warning if the user explicitly requests `notes`.
+
+## 15.2 Full-tx context balancing (normative)
+
+When `--full-tx` and `--context balanced` are set:
+- Include all matching splits.
+- Then include the smallest deterministic set of remaining splits needed to balance the transaction per commodity:
+  - Sort remaining splits by absolute value descending, then by split GUID for tie-break.
+  - Add splits until the per-commodity sums for the transaction are balanced (sum == 0).
+  - If a transaction is not perfectly balanceable by splits, fall back to `full` for that transaction and emit a warning.
+
+## 16 Implementation notes
+
+- Create a new directory, gcg/ for this work.
+- Create a file gcg/README.md that provides usage notes (basically, the man page).
+- Provide appropriate and natural python machinery for testing the code and for installing it locally.
+- Set up the machinery necessary to upload to PyPi.  Create a file called PyPi.md that explains the various actions a maintainer might take with PyPi (since I don't do this often, I'll forget).
+- The code must pass `black --check --verbose --line-length 79` and `flake8`.
+- Set up github workflows so that the gcg directory is checked on PR.
+- Functions must have self-documenting names and/or comments so that the code is readable.
