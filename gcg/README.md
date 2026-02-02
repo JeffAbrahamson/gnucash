@@ -259,19 +259,100 @@ gcg is **read-only** and will never modify your GnuCash book:
 
 ## Development
 
-```bash
-# Install dev dependencies
-pip install -e ".[dev]"
+### Setting Up a Development Environment
 
-# Run tests
+```bash
+# Clone the repository
+git clone https://github.com/example/gcg.git
+cd gcg
+
+# Create and activate a virtual environment
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install in editable mode with dev dependencies
+pip install -e ".[dev]"
+```
+
+### Running Tests
+
+```bash
+# Run all tests
 pytest
 
-# Check formatting
-black --check --line-length 79 gcg/
-flake8 gcg/
+# Run with verbose output
+pytest -v
 
-# Format code
-black --line-length 79 gcg/
+# Run a specific test file
+pytest tests/test_cli.py
+
+# Run with coverage report
+pytest --cov=gcg --cov-report=term-missing
+```
+
+### Code Quality
+
+```bash
+# Check formatting (must pass for CI)
+black --check --line-length 79 gcg/ tests/
+flake8 gcg/ tests/
+
+# Auto-format code
+black --line-length 79 gcg/ tests/
+```
+
+### Running Locally Without Installing
+
+You can run gcg directly from the source directory without publishing to PyPI:
+
+```bash
+# Option 1: Use pip install -e (editable/development mode)
+# After running this once, the 'gcg' command is available
+pip install -e .
+gcg --help
+
+# Option 2: Run as a Python module
+python -m gcg --help
+python -m gcg accounts "Bank"
+python -m gcg grep "amazon" --after 2025-01-01
+
+# Option 3: Run the CLI directly
+python gcg/cli.py --help
+```
+
+### Project Structure
+
+```
+gcg/
+├── gcg/                 # Main package
+│   ├── __init__.py
+│   ├── __main__.py      # Allows `python -m gcg`
+│   ├── cli.py           # Command-line interface
+│   ├── book.py          # GnuCash book access
+│   ├── cache.py         # Sidecar cache management
+│   ├── config.py        # Configuration handling
+│   ├── currency.py      # Currency conversion
+│   ├── output.py        # Output formatting
+│   └── repl.py          # Interactive REPL
+├── tests/               # Test suite
+│   ├── conftest.py      # Pytest fixtures
+│   ├── test_cli.py
+│   ├── test_config.py
+│   ├── test_currency.py
+│   ├── test_integration.py
+│   └── test_output.py
+├── pyproject.toml       # Package configuration
+└── README.md
+```
+
+### Testing with a Real GnuCash Book
+
+Set the `GCG_BOOK` environment variable to point to your GnuCash file:
+
+```bash
+export GCG_BOOK=~/path/to/your/book.gnucash
+gcg doctor  # Verify it can open the book
+gcg accounts ""  # List all accounts
 ```
 
 ## License

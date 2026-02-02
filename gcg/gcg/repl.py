@@ -23,6 +23,11 @@ from gcg.book import (
     open_gnucash_book,
 )
 from gcg.config import Config, get_xdg_state_home
+from gcg.currency import (
+    CurrencyConverter,
+    determine_display_currency,
+    get_account_currencies,
+)
 from gcg.output import (
     AccountRow,
     OutputFormatter,
@@ -317,9 +322,15 @@ Options are the same as CLI. Example:
 
         accounts.sort(key=lambda a: a.fullname)
 
+        if parsed.tree_prune:
+            accounts = self._prune_to_matching_paths(accounts)
+
         rows = []
         for acc in accounts:
             depth = acc.fullname.count(":") if parsed.tree else 0
+            if parsed.max_depth is not None and parsed.tree:
+                if depth > parsed.max_depth:
+                    continue
             rows.append(
                 AccountRow(
                     name=acc.fullname,
@@ -354,7 +365,9 @@ Options are the same as CLI. Example:
         parser.add_argument("text")
         parser.add_argument("--regex", action="store_true")
         parser.add_argument("--case-sensitive", action="store_true")
-        parser.add_argument("--in", dest="search_fields", default="desc,memo")
+        parser.add_argument(
+            "--in", dest="search_fields", default="desc,memo,notes"
+        )
         parser.add_argument("--account", metavar="PATTERN")
         parser.add_argument("--account-regex", action="store_true")
         parser.add_argument("--no-subtree", action="store_true")
@@ -435,6 +448,29 @@ Options are the same as CLI. Example:
             ]
             account_set = None
 
+        notes_supported = (
+            self.book_info.has_notes_column or self.book_info.has_slots_notes
+        )
+        search_notes = "notes" in search_fields and notes_supported
+        if "notes" in search_fields and not notes_supported:
+            print(
+                "Warning: Notes not supported in this book schema",
+                file=sys.stderr,
+            )
+            search_fields.discard("notes")
+
+        notes_map: dict[str, str] = {}
+        if search_notes:
+            all_tx_guids = set()
+            for acc in accounts:
+                for split in acc.splits:
+                    all_tx_guids.add(split.transaction.guid)
+            notes_map = get_transaction_notes_batch(
+                self.book_path,
+                list(all_tx_guids),
+                self.book_info.has_notes_column,
+            )
+
         # Collect matching splits
         matching_splits = []
         seen_tx_guids = set()
@@ -466,6 +502,10 @@ Options are the same as CLI. Example:
                     searchable += tx.description + " "
                 if "memo" in search_fields:
                     searchable += (split.memo or "") + " "
+                if search_notes:
+                    notes = notes_map.get(tx.guid, "")
+                    if notes:
+                        searchable += notes + " "
 
                 if not pattern.search(searchable):
                     continue
@@ -482,12 +522,12 @@ Options are the same as CLI. Example:
             print("No matches found.")
             return
 
-        # Batch fetch notes
-        notes_map = get_transaction_notes_batch(
-            self.book_path,
-            list(tx_guids_for_notes),
-            self.book_info.has_notes_column,
-        )
+        if not search_notes:
+            notes_map = get_transaction_notes_batch(
+                self.book_path,
+                list(tx_guids_for_notes),
+                self.book_info.has_notes_column,
+            )
 
         # Convert to rows
         rows = self._splits_to_rows(matching_splits, notes_map, parsed.signed)
@@ -503,6 +543,7 @@ Options are the same as CLI. Example:
         formatter = OutputFormatter(
             format_type=self.output_format,
             show_header=not parsed.no_header,
+            include_notes=search_notes,
         )
 
         if parsed.full_tx:
@@ -735,12 +776,43 @@ Options are the same as CLI. Example:
     ) -> list[SplitRow]:
         """Convert split/tx/acc tuples to SplitRow objects."""
         rows = []
+        converter = CurrencyConverter(
+            self.book_path,
+            base_currency=self.base_currency,
+            lookback_days=self.config.fx_lookback_days,
+        )
+        currency_mode = self.currency_mode
+
+        account_currencies = get_account_currencies(
+            [acc for _, _, acc in splits_data]
+        )
+        target_currency = determine_display_currency(
+            currency_mode,
+            [s for s, _, _ in splits_data],
+            account_currencies,
+            self.base_currency,
+        )
+
         for split, tx, acc in splits_data:
             split_value = Decimal(str(split.value))
             if not signed:
                 split_value = abs(split_value)
 
             split_currency = acc.commodity.mnemonic if acc.commodity else "???"
+            if target_currency and target_currency != split_currency:
+                result = converter.convert(
+                    split_value,
+                    split_currency,
+                    target_currency,
+                    tx.post_date,
+                )
+                display_amount = result.amount
+                display_currency = result.currency
+                fx_rate = result.fx_rate if result.converted else None
+            else:
+                display_amount = split_value
+                display_currency = split_currency
+                fx_rate = None
             notes = notes_map.get(tx.guid)
 
             row = SplitRow(
@@ -749,14 +821,39 @@ Options are the same as CLI. Example:
                 account=acc.fullname,
                 memo=split.memo,
                 notes=notes,
-                amount=split_value,
-                currency=split_currency,
-                fx_rate=None,
+                amount=display_amount,
+                currency=display_currency,
+                fx_rate=fx_rate,
                 tx_guid=tx.guid,
                 split_guid=split.guid,
             )
             rows.append(row)
         return rows
+
+    def _prune_to_matching_paths(self, matching_accounts: list) -> list:
+        """Prune account tree to show paths to matching accounts."""
+        matching_set = set(matching_accounts)
+        result_set = set(matching_accounts)
+
+        for acc in matching_accounts:
+            parent = acc.parent
+            while parent is not None:
+                if parent.type not in ("ROOT", "TRADING"):
+                    result_set.add(parent)
+                parent = parent.parent
+
+        all_accounts = [
+            a for a in self.book.accounts if a.type not in ("ROOT", "TRADING")
+        ]
+        for acc in all_accounts:
+            parent = acc.parent
+            while parent is not None:
+                if parent in matching_set:
+                    result_set.add(acc)
+                    break
+                parent = parent.parent
+
+        return list(result_set)
 
     def _splits_to_transactions(
         self,

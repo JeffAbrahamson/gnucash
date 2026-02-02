@@ -447,6 +447,9 @@ def cmd_accounts(args, config: Config) -> int:
             rows = []
             for acc in accounts:
                 depth = acc.fullname.count(":") if args.tree else 0
+                if args.tree and args.max_depth is not None:
+                    if depth > args.max_depth:
+                        continue
                 rows.append(
                     AccountRow(
                         name=acc.fullname,
@@ -1125,18 +1128,42 @@ def _select_balanced_splits(
     - Add minimal counter-splits to balance per commodity
     - Sort remaining by absolute value descending, then guid for tie-break
     """
-    # Start with matching splits
+
+    def _find_balancing_subset(
+        splits: list, target: Decimal
+    ) -> Optional[list]:
+        values = [Decimal(str(s.value)) for s in splits]
+        split_count = len(splits)
+
+        for size in range(1, split_count + 1):
+            chosen_indexes: list[int] = []
+
+            def backtrack(start: int, remaining: int, total: Decimal) -> bool:
+                if remaining == 0:
+                    return total == target
+                for idx in range(start, split_count - remaining + 1):
+                    chosen_indexes.append(idx)
+                    if backtrack(
+                        idx + 1,
+                        remaining - 1,
+                        total + values[idx],
+                    ):
+                        return True
+                    chosen_indexes.pop()
+                return False
+
+            if backtrack(0, size, Decimal("0")):
+                return [splits[i] for i in chosen_indexes]
+
+        return None
+
     selected = [s for s in all_splits if s.guid in matching_guids]
-    selected_guids = set(matching_guids)
-
-    # Get remaining splits
     remaining = [s for s in all_splits if s.guid not in matching_guids]
-
-    # Sort remaining by absolute value descending, then guid for tie-break
     remaining.sort(key=lambda s: (-abs(Decimal(str(s.value))), s.guid))
 
-    # Calculate balance per commodity for selected splits
     balance_by_currency: dict[str, Decimal] = {}
+    remaining_by_currency: dict[str, list] = {}
+
     for s in selected:
         currency = s.account.commodity.mnemonic if s.account.commodity else ""
         value = Decimal(str(s.value))
@@ -1144,30 +1171,25 @@ def _select_balanced_splits(
             balance_by_currency.get(currency, Decimal("0")) + value
         )
 
-    # Add splits until balanced
     for s in remaining:
         currency = s.account.commodity.mnemonic if s.account.commodity else ""
-        current_balance = balance_by_currency.get(currency, Decimal("0"))
+        remaining_by_currency.setdefault(currency, []).append(s)
 
-        if current_balance != Decimal("0"):
-            value = Decimal(str(s.value))
-            # Check if adding this split moves us toward zero
-            new_balance = current_balance + value
-            if abs(new_balance) <= abs(current_balance):
-                selected.append(s)
-                selected_guids.add(s.guid)
-                balance_by_currency[currency] = new_balance
-
-    # Check if any currency is still unbalanced
     for currency, balance in balance_by_currency.items():
-        if balance != Decimal("0"):
-            # Fall back to full context for this transaction
+        if balance == Decimal("0"):
+            continue
+        target = -balance
+        subset = _find_balancing_subset(
+            remaining_by_currency.get(currency, []), target
+        )
+        if subset is None:
             print(
                 f"Warning: Transaction not perfectly balanced in {currency}, "
                 f"showing full context",
                 file=sys.stderr,
             )
             return all_splits
+        selected.extend(subset)
 
     return selected
 
