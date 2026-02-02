@@ -6,7 +6,6 @@ Ensures read-only access to protect user data.
 """
 
 import sqlite3
-import sys
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,6 +17,12 @@ from piecash.core.book import Book
 
 class BookOpenError(Exception):
     """Raised when the book cannot be opened."""
+
+    pass
+
+
+class InvalidPatternError(Exception):
+    """Raised when a search pattern is invalid (e.g., bad regex)."""
 
     pass
 
@@ -197,6 +202,9 @@ def get_account_by_pattern(
 
     Returns:
         List of matching Account objects
+
+    Raises:
+        InvalidPatternError: If the regex pattern is invalid
     """
     import re
 
@@ -208,8 +216,7 @@ def get_account_by_pattern(
         try:
             compiled = re.compile(pattern, flags)
         except re.error as e:
-            print(f"Invalid regex pattern: {e}", file=sys.stderr)
-            sys.exit(2)
+            raise InvalidPatternError(f"Invalid regex pattern: {e}") from e
         matches = [a for a in accounts if compiled.search(a.fullname)]
     else:
         if not case_sensitive:
@@ -237,3 +244,56 @@ def get_account_by_pattern(
             parent = parent.parent
 
     return list(result_set)
+
+
+def get_transaction_notes_batch(
+    db_path: Path, tx_guids: list[str], has_notes_column: bool
+) -> dict[str, Optional[str]]:
+    """
+    Get notes for multiple transactions in a single query.
+
+    Args:
+        db_path: Path to the GnuCash SQLite file
+        tx_guids: List of transaction GUIDs to fetch notes for
+        has_notes_column: Whether notes are in transactions table
+
+    Returns:
+        Dictionary mapping tx_guid to notes (or None if no notes)
+    """
+    if not tx_guids:
+        return {}
+
+    uri = f"file:{db_path}?mode=ro"
+    result = {}
+
+    try:
+        conn = sqlite3.connect(uri, uri=True)
+        cursor = conn.cursor()
+
+        # Build placeholders for IN clause
+        placeholders = ",".join("?" * len(tx_guids))
+
+        if has_notes_column:
+            cursor.execute(
+                f"SELECT guid, notes FROM transactions "
+                f"WHERE guid IN ({placeholders})",
+                tx_guids,
+            )
+        else:
+            cursor.execute(
+                f"SELECT obj_guid, string_val FROM slots "
+                f"WHERE obj_guid IN ({placeholders}) AND name = 'notes'",
+                tx_guids,
+            )
+
+        for row in cursor.fetchall():
+            guid, notes = row
+            if notes:
+                result[guid] = notes
+
+        conn.close()
+
+    except sqlite3.Error:
+        pass
+
+    return result

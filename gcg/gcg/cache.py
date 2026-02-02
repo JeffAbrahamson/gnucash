@@ -230,9 +230,11 @@ class CacheManager:
                     WHERE splits_fts MATCH ?
                     ORDER BY s.tx_date DESC
                 """
+                params: list = [text]
                 if limit:
-                    query += f" LIMIT {limit}"
-                cursor.execute(query, (text,))
+                    query += " LIMIT ?"
+                    params.append(limit)
+                cursor.execute(query, params)
             else:
                 # Fall back to LIKE search
                 pattern = f"%{text.lower()}%"
@@ -244,9 +246,11 @@ class CacheManager:
                        OR account_name_lower LIKE ?
                     ORDER BY tx_date DESC
                 """
+                params = [pattern, pattern, pattern]
                 if limit:
-                    query += f" LIMIT {limit}"
-                cursor.execute(query, (pattern, pattern, pattern))
+                    query += " LIMIT ?"
+                    params.append(limit)
+                cursor.execute(query, params)
 
             return [dict(row) for row in cursor.fetchall()]
 

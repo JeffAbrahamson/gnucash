@@ -14,8 +14,10 @@ from typing import Optional
 from gcg import __version__
 from gcg.book import (
     BookOpenError,
+    InvalidPatternError,
     get_account_by_pattern,
     get_transaction_notes,
+    get_transaction_notes_batch,
     open_gnucash_book,
 )
 from gcg.config import Config, load_config
@@ -371,27 +373,75 @@ def resolve_date_filters(args) -> tuple[Optional[date], Optional[date]]:
     return (after_date, before_date)
 
 
+def _prune_to_matching_paths(matching_accounts: list, book) -> list:
+    """
+    Prune account tree to show paths to matching accounts.
+
+    Shows the tree from root down to matching paths, plus full subtrees
+    below any matching accounts.
+
+    Args:
+        matching_accounts: List of accounts that matched the pattern
+        book: The GnuCash book
+
+    Returns:
+        List of accounts to display (ancestors + matches + descendants)
+    """
+    matching_set = set(matching_accounts)
+    result_set = set(matching_accounts)
+
+    # Add all ancestors of matching accounts
+    for acc in matching_accounts:
+        parent = acc.parent
+        while parent is not None:
+            if parent.type not in ("ROOT", "TRADING"):
+                result_set.add(parent)
+            parent = parent.parent
+
+    # Add all descendants of matching accounts
+    all_accounts = [
+        a for a in book.accounts if a.type not in ("ROOT", "TRADING")
+    ]
+    for acc in all_accounts:
+        parent = acc.parent
+        while parent is not None:
+            if parent in matching_set:
+                result_set.add(acc)
+                break
+            parent = parent.parent
+
+    return list(result_set)
+
+
 def cmd_accounts(args, config: Config) -> int:
     """Handle the accounts command."""
     try:
         with open_gnucash_book(config.resolve_book_path()) as (book, info):
-            accounts = get_account_by_pattern(
-                book,
-                args.pattern,
-                is_regex=args.regex,
-                case_sensitive=args.case_sensitive,
-                include_subtree=(
-                    not args.no_subtree
-                    if hasattr(args, "no_subtree")
-                    else True
-                ),
-            )
+            try:
+                accounts = get_account_by_pattern(
+                    book,
+                    args.pattern,
+                    is_regex=args.regex,
+                    case_sensitive=args.case_sensitive,
+                    include_subtree=(
+                        not args.no_subtree
+                        if hasattr(args, "no_subtree")
+                        else True
+                    ),
+                )
+            except InvalidPatternError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                return 2
 
             if not accounts:
                 return 1  # No matches
 
             # Sort accounts by full name
             accounts.sort(key=lambda a: a.fullname)
+
+            # Apply tree-prune if requested
+            if args.tree_prune:
+                accounts = _prune_to_matching_paths(accounts, book)
 
             # Convert to output rows
             rows = []
@@ -455,13 +505,17 @@ def cmd_grep(args, config: Config) -> int:
         with open_gnucash_book(config.resolve_book_path()) as (book, info):
             # Filter accounts if specified
             if args.account:
-                accounts = get_account_by_pattern(
-                    book,
-                    args.account,
-                    is_regex=args.account_regex,
-                    case_sensitive=False,
-                    include_subtree=not args.no_subtree,
-                )
+                try:
+                    accounts = get_account_by_pattern(
+                        book,
+                        args.account,
+                        is_regex=args.account_regex,
+                        case_sensitive=False,
+                        include_subtree=not args.no_subtree,
+                    )
+                except InvalidPatternError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    return 2
                 account_set = set(accounts)
             else:
                 accounts = [
@@ -473,12 +527,26 @@ def cmd_grep(args, config: Config) -> int:
 
             # Check notes support
             notes_supported = info.has_notes_column or info.has_slots_notes
+            search_notes = "notes" in search_fields and notes_supported
             if "notes" in search_fields and not notes_supported:
                 print(
                     "Warning: Notes not supported in this book schema",
                     file=sys.stderr,
                 )
                 search_fields.discard("notes")
+
+            # Pre-fetch all notes if we need to search them
+            notes_map: dict[str, str] = {}
+            if search_notes:
+                all_tx_guids = set()
+                for acc in accounts:
+                    for split in acc.splits:
+                        all_tx_guids.add(split.transaction.guid)
+                notes_map = get_transaction_notes_batch(
+                    config.resolve_book_path(),
+                    list(all_tx_guids),
+                    info.has_notes_column,
+                )
 
             # Collect matching splits
             matching_splits = []
@@ -515,12 +583,8 @@ def cmd_grep(args, config: Config) -> int:
                         searchable += tx.description + " "
                     if "memo" in search_fields:
                         searchable += (split.memo or "") + " "
-                    if "notes" in search_fields and notes_supported:
-                        notes = get_transaction_notes(
-                            config.resolve_book_path(),
-                            tx.guid,
-                            info.has_notes_column,
-                        )
+                    if search_notes:
+                        notes = notes_map.get(tx.guid, "")
                         if notes:
                             searchable += notes + " "
 
@@ -544,6 +608,7 @@ def cmd_grep(args, config: Config) -> int:
                 config,
                 info,
                 args,
+                notes_map=notes_map,
             )
 
             # Sort
@@ -558,12 +623,12 @@ def cmd_grep(args, config: Config) -> int:
             formatter = OutputFormatter(
                 format_type=args.format,
                 show_header=not args.no_header,
-                include_notes="notes" in search_fields and notes_supported,
+                include_notes=search_notes,
             )
 
             if args.full_tx:
                 tx_rows = _splits_to_transactions(
-                    matching_splits, config, info, args
+                    matching_splits, config, info, args, notes_map=notes_map
                 )
                 formatter.format_transactions(tx_rows)
             else:
@@ -583,13 +648,17 @@ def cmd_ledger(args, config: Config) -> int:
 
     try:
         with open_gnucash_book(config.resolve_book_path()) as (book, info):
-            accounts = get_account_by_pattern(
-                book,
-                args.account_pattern,
-                is_regex=args.account_regex,
-                case_sensitive=False,
-                include_subtree=not args.no_subtree,
-            )
+            try:
+                accounts = get_account_by_pattern(
+                    book,
+                    args.account_pattern,
+                    is_regex=args.account_regex,
+                    case_sensitive=False,
+                    include_subtree=not args.no_subtree,
+                )
+            except InvalidPatternError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                return 2
 
             if not accounts:
                 print(
@@ -599,6 +668,7 @@ def cmd_ledger(args, config: Config) -> int:
                 return 1
 
             splits_data = []
+            tx_guids_for_notes = set()
 
             for acc in accounts:
                 for split in acc.splits:
@@ -622,11 +692,21 @@ def cmd_ledger(args, config: Config) -> int:
                         continue
 
                     splits_data.append((split, tx, acc))
+                    tx_guids_for_notes.add(tx.guid)
 
             if not splits_data:
                 return 1
 
-            rows = _splits_to_rows(splits_data, config, info, args)
+            # Batch fetch notes
+            notes_map = get_transaction_notes_batch(
+                config.resolve_book_path(),
+                list(tx_guids_for_notes),
+                info.has_notes_column,
+            )
+
+            rows = _splits_to_rows(
+                splits_data, config, info, args, notes_map=notes_map
+            )
             rows = _sort_rows(rows, args.sort, args.reverse)
 
             if args.offset:
@@ -844,6 +924,7 @@ def _splits_to_rows(
     config: Config,
     info,
     args,
+    notes_map: Optional[dict[str, str]] = None,
 ) -> list[SplitRow]:
     """Convert split/tx/acc tuples to SplitRow objects."""
     rows = []
@@ -870,6 +951,17 @@ def _splits_to_rows(
         config.base_currency,
     )
 
+    # If notes_map not provided and notes supported, batch fetch them
+    if notes_map is None and (info.has_notes_column or info.has_slots_notes):
+        tx_guids = list({tx.guid for _, tx, _ in splits_data})
+        notes_map = get_transaction_notes_batch(
+            config.resolve_book_path(),
+            tx_guids,
+            info.has_notes_column,
+        )
+    elif notes_map is None:
+        notes_map = {}
+
     for split, tx, acc in splits_data:
         split_value = Decimal(str(split.value))
         if not signed:
@@ -893,12 +985,8 @@ def _splits_to_rows(
             display_currency = split_currency
             fx_rate = None
 
-        # Get notes if available
-        notes = None
-        if info.has_notes_column or info.has_slots_notes:
-            notes = get_transaction_notes(
-                config.resolve_book_path(), tx.guid, info.has_notes_column
-            )
+        # Get notes from batch-fetched map
+        notes = notes_map.get(tx.guid)
 
         row = SplitRow(
             date=tx.post_date,
@@ -927,37 +1015,78 @@ def _splits_to_transactions(
     config: Config,
     info,
     args,
+    notes_map: Optional[dict[str, str]] = None,
 ) -> list[TransactionRow]:
     """Convert split data to TransactionRow objects (for --full-tx)."""
+    # If notes_map not provided and notes supported, batch fetch them
+    if notes_map is None and (info.has_notes_column or info.has_slots_notes):
+        tx_guids = list({tx.guid for _, tx, _ in splits_data})
+        notes_map = get_transaction_notes_batch(
+            config.resolve_book_path(),
+            tx_guids,
+            info.has_notes_column,
+        )
+    elif notes_map is None:
+        notes_map = {}
+
+    context_mode = getattr(args, "context", "full")
+    signed = getattr(args, "signed", False)
+
     # Group by transaction
     tx_map = {}
     for split, tx, acc in splits_data:
         if tx.guid not in tx_map:
-            notes = None
-            if info.has_notes_column or info.has_slots_notes:
-                notes = get_transaction_notes(
-                    config.resolve_book_path(), tx.guid, info.has_notes_column
-                )
             tx_map[tx.guid] = {
                 "tx": tx,
-                "notes": notes,
-                "splits": [],
+                "notes": notes_map.get(tx.guid),
+                "all_splits": [],  # All splits in the transaction
+                "matching_splits": set(),  # Guids of matching splits
             }
 
-        # Add all splits of the transaction
+        tx_map[tx.guid]["matching_splits"].add(split.guid)
+
+        # Add all splits of the transaction (we'll filter later for balanced)
         for s in tx.splits:
+            tx_map[tx.guid]["all_splits"].append(s)
+
+    rows = []
+    for guid, data in tx_map.items():
+        tx = data["tx"]
+
+        # Dedupe all_splits by guid
+        seen_guids = set()
+        unique_all_splits = []
+        for s in data["all_splits"]:
+            if s.guid not in seen_guids:
+                seen_guids.add(s.guid)
+                unique_all_splits.append(s)
+
+        if context_mode == "balanced":
+            # Implement balanced context per SPEC §15.2
+            selected_splits = _select_balanced_splits(
+                unique_all_splits,
+                data["matching_splits"],
+                signed,
+            )
+        else:
+            # Full context: include all splits
+            selected_splits = unique_all_splits
+
+        # Convert to SplitRow objects
+        split_rows = []
+        for s in selected_splits:
             split_acc = s.account
             split_value = Decimal(str(s.value))
-            if not getattr(args, "signed", False):
+            if not signed:
                 split_value = abs(split_value)
 
-            tx_map[tx.guid]["splits"].append(
+            split_rows.append(
                 SplitRow(
                     date=tx.post_date,
                     description=tx.description,
                     account=split_acc.fullname,
                     memo=s.memo,
-                    notes=tx_map[tx.guid]["notes"],
+                    notes=data["notes"],
                     amount=split_value,
                     currency=(
                         split_acc.commodity.mnemonic
@@ -970,27 +1099,77 @@ def _splits_to_transactions(
                 )
             )
 
-    rows = []
-    for guid, data in tx_map.items():
-        # Dedupe splits by guid
-        seen = set()
-        unique_splits = []
-        for s in data["splits"]:
-            if s.split_guid not in seen:
-                seen.add(s.split_guid)
-                unique_splits.append(s)
-
         rows.append(
             TransactionRow(
                 tx_guid=guid,
-                date=data["tx"].post_date,
-                description=data["tx"].description,
+                date=tx.post_date,
+                description=tx.description,
                 notes=data["notes"],
-                splits=unique_splits,
+                splits=split_rows,
             )
         )
 
     return rows
+
+
+def _select_balanced_splits(
+    all_splits: list,
+    matching_guids: set[str],
+    signed: bool,
+) -> list:
+    """
+    Select splits to show in balanced context mode.
+
+    Per SPEC §15.2:
+    - Include all matching splits
+    - Add minimal counter-splits to balance per commodity
+    - Sort remaining by absolute value descending, then guid for tie-break
+    """
+    # Start with matching splits
+    selected = [s for s in all_splits if s.guid in matching_guids]
+    selected_guids = set(matching_guids)
+
+    # Get remaining splits
+    remaining = [s for s in all_splits if s.guid not in matching_guids]
+
+    # Sort remaining by absolute value descending, then guid for tie-break
+    remaining.sort(key=lambda s: (-abs(Decimal(str(s.value))), s.guid))
+
+    # Calculate balance per commodity for selected splits
+    balance_by_currency: dict[str, Decimal] = {}
+    for s in selected:
+        currency = s.account.commodity.mnemonic if s.account.commodity else ""
+        value = Decimal(str(s.value))
+        balance_by_currency[currency] = (
+            balance_by_currency.get(currency, Decimal("0")) + value
+        )
+
+    # Add splits until balanced
+    for s in remaining:
+        currency = s.account.commodity.mnemonic if s.account.commodity else ""
+        current_balance = balance_by_currency.get(currency, Decimal("0"))
+
+        if current_balance != Decimal("0"):
+            value = Decimal(str(s.value))
+            # Check if adding this split moves us toward zero
+            new_balance = current_balance + value
+            if abs(new_balance) <= abs(current_balance):
+                selected.append(s)
+                selected_guids.add(s.guid)
+                balance_by_currency[currency] = new_balance
+
+    # Check if any currency is still unbalanced
+    for currency, balance in balance_by_currency.items():
+        if balance != Decimal("0"):
+            # Fall back to full context for this transaction
+            print(
+                f"Warning: Transaction not perfectly balanced in {currency}, "
+                f"showing full context",
+                file=sys.stderr,
+            )
+            return all_splits
+
+    return selected
 
 
 def _sort_rows(
