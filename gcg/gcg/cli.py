@@ -142,6 +142,11 @@ def create_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--offset", type=int, metavar="N", help="Skip first N rows"
     )
+    parser.add_argument(
+        "--full-account",
+        action="store_true",
+        help="Show full account paths (default: short names)",
+    )
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
@@ -606,12 +611,14 @@ def cmd_grep(args, config: Config) -> int:
                 return 1  # No matches
 
             # Format output
+            full_account = getattr(args, "full_account", False)
             rows = _splits_to_rows(
                 matching_splits,
                 config,
                 info,
                 args,
                 notes_map=notes_map,
+                full_account=full_account,
             )
 
             # Sort
@@ -631,7 +638,12 @@ def cmd_grep(args, config: Config) -> int:
 
             if args.full_tx:
                 tx_rows = _splits_to_transactions(
-                    matching_splits, config, info, args, notes_map=notes_map
+                    matching_splits,
+                    config,
+                    info,
+                    args,
+                    notes_map=notes_map,
+                    full_account=full_account,
                 )
                 formatter.format_transactions(tx_rows)
             else:
@@ -707,8 +719,14 @@ def cmd_ledger(args, config: Config) -> int:
                 info.has_notes_column,
             )
 
+            full_account = getattr(args, "full_account", False)
             rows = _splits_to_rows(
-                splits_data, config, info, args, notes_map=notes_map
+                splits_data,
+                config,
+                info,
+                args,
+                notes_map=notes_map,
+                full_account=full_account,
             )
             rows = _sort_rows(rows, args.sort, args.reverse)
 
@@ -749,6 +767,7 @@ def cmd_tx(args, config: Config) -> int:
             )
 
             # Build split rows
+            full_account = getattr(args, "full_account", False)
             split_rows = []
             for split in tx.splits:
                 acc = split.account
@@ -756,7 +775,7 @@ def cmd_tx(args, config: Config) -> int:
                     SplitRow(
                         date=tx.post_date,
                         description=tx.description,
-                        account=acc.fullname,
+                        account=_account_name(acc.fullname, full_account),
                         memo=split.memo,
                         notes=notes,
                         amount=Decimal(str(split.value)),
@@ -817,10 +836,11 @@ def cmd_split(args, config: Config) -> int:
                 info.has_notes_column,
             )
 
+            full_account = getattr(args, "full_account", False)
             row = SplitRow(
                 date=found_tx.post_date,
                 description=found_tx.description,
-                account=found_acc.fullname,
+                account=_account_name(found_acc.fullname, full_account),
                 memo=found_split.memo,
                 notes=notes,
                 amount=Decimal(str(found_split.value)),
@@ -928,6 +948,7 @@ def _splits_to_rows(
     info,
     args,
     notes_map: Optional[dict[str, str]] = None,
+    full_account: bool = False,
 ) -> list[SplitRow]:
     """Convert split/tx/acc tuples to SplitRow objects."""
     rows = []
@@ -994,7 +1015,7 @@ def _splits_to_rows(
         row = SplitRow(
             date=tx.post_date,
             description=tx.description,
-            account=acc.fullname,
+            account=_account_name(acc.fullname, full_account),
             memo=split.memo,
             notes=notes,
             amount=display_amount,
@@ -1019,6 +1040,7 @@ def _splits_to_transactions(
     info,
     args,
     notes_map: Optional[dict[str, str]] = None,
+    full_account: bool = False,
 ) -> list[TransactionRow]:
     """Convert split data to TransactionRow objects (for --full-tx)."""
     # If notes_map not provided and notes supported, batch fetch them
@@ -1087,7 +1109,7 @@ def _splits_to_transactions(
                 SplitRow(
                     date=tx.post_date,
                     description=tx.description,
-                    account=split_acc.fullname,
+                    account=_account_name(split_acc.fullname, full_account),
                     memo=s.memo,
                     notes=data["notes"],
                     amount=split_value,
@@ -1192,6 +1214,13 @@ def _select_balanced_splits(
         selected.extend(subset)
 
     return selected
+
+
+def _account_name(fullname: str, full_account: bool) -> str:
+    """Return account name - full path or just final component."""
+    if full_account:
+        return fullname
+    return fullname.rsplit(":", 1)[-1]
 
 
 def _sort_rows(

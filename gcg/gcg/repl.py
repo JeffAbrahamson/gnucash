@@ -36,6 +36,13 @@ from gcg.output import (
 )
 
 
+def _account_name(fullname: str, full_account: bool) -> str:
+    """Return account name - full path or just final component."""
+    if full_account:
+        return fullname
+    return fullname.rsplit(":", 1)[-1]
+
+
 class ReplSession:
     """
     Interactive REPL session for gcg.
@@ -62,6 +69,7 @@ class ReplSession:
         self.output_format = config.output_format
         self.currency_mode = config.currency_mode
         self.base_currency = config.base_currency
+        self.full_account = False
 
         # History file
         self.history_path = config.history_path or (
@@ -241,6 +249,8 @@ gcg REPL Commands:
                     Set currency display mode
   set base-currency CUR
                     Set base currency for conversions
+  set full-account on|off
+                    Show full account paths (default: off = short names)
 
   help              Show this help
   quit / exit       Exit the REPL
@@ -257,6 +267,7 @@ Options are the same as CLI. Example:
             print(f"  format: {self.output_format}")
             print(f"  currency: {self.currency_mode}")
             print(f"  base-currency: {self.base_currency}")
+            print(f"  full-account: {self.full_account}")
             return
 
         setting = args[0].lower()
@@ -279,6 +290,16 @@ Options are the same as CLI. Example:
         elif setting == "base-currency":
             self.base_currency = value.upper()
             print(f"Base currency set to: {self.base_currency}")
+
+        elif setting == "full-account":
+            if value.lower() in ("true", "on", "yes", "1"):
+                self.full_account = True
+                print("Full account paths enabled")
+            elif value.lower() in ("false", "off", "no", "0"):
+                self.full_account = False
+                print("Short account names enabled")
+            else:
+                print("Invalid value. Use: on/off, true/false")
 
         else:
             print(f"Unknown setting: {setting}")
@@ -699,7 +720,7 @@ Options are the same as CLI. Example:
                 SplitRow(
                     date=tx.post_date,
                     description=tx.description,
-                    account=acc.fullname,
+                    account=_account_name(acc.fullname, self.full_account),
                     memo=split.memo,
                     notes=notes,
                     amount=Decimal(str(split.value)),
@@ -753,7 +774,7 @@ Options are the same as CLI. Example:
         row = SplitRow(
             date=found_tx.post_date,
             description=found_tx.description,
-            account=found_acc.fullname,
+            account=_account_name(found_acc.fullname, self.full_account),
             memo=found_split.memo,
             notes=notes,
             amount=Decimal(str(found_split.value)),
@@ -818,7 +839,7 @@ Options are the same as CLI. Example:
             row = SplitRow(
                 date=tx.post_date,
                 description=tx.description,
-                account=acc.fullname,
+                account=_account_name(acc.fullname, self.full_account),
                 memo=split.memo,
                 notes=notes,
                 amount=display_amount,
@@ -881,7 +902,9 @@ Options are the same as CLI. Example:
                     SplitRow(
                         date=tx.post_date,
                         description=tx.description,
-                        account=split_acc.fullname,
+                        account=_account_name(
+                            split_acc.fullname, self.full_account
+                        ),
                         memo=s.memo,
                         notes=tx_map[tx.guid]["notes"],
                         amount=split_value,

@@ -133,6 +133,7 @@ gcg cache drop       # Delete cache
 --book PATH         Path to GnuCash SQLite file
 --format FMT        Output format: table, csv, json
 --no-header         Omit header row
+--full-account      Show full account paths (default: short names)
 --sort KEY          Sort by: date, amount, account, description
 --reverse           Reverse sort order
 --limit N           Limit output rows

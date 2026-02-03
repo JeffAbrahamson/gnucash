@@ -64,7 +64,7 @@ target-version = ["py39", "py310", "py311", "py312"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --disable-warnings"
 filterwarnings = [
     "ignore::sqlalchemy.exc.SAWarning",
 ]

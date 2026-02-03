@@ -1,11 +1,24 @@
 """Pytest fixtures for gcg integration tests."""
 
 import tempfile
+import warnings
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
 
 import pytest
+
+# Suppress SQLAlchemy warnings from piecash before importing it
+# Must be done before any piecash import
+warnings.filterwarnings("ignore", module="piecash.*")
+warnings.filterwarnings("ignore", module="sqlalchemy.*")
+
+try:
+    from sqlalchemy.exc import SAWarning
+    warnings.filterwarnings("ignore", category=SAWarning)
+except ImportError:
+    pass
+
 
 # Skip all integration tests if piecash is not available
 piecash = pytest.importorskip("piecash")
