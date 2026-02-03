@@ -372,7 +372,11 @@ Options are the same as CLI. Example:
             show_header=not parsed.no_header,
             show_guids=parsed.show_guids,
         )
-        formatter.format_accounts(rows, tree_mode=parsed.tree)
+        formatter.format_accounts(
+            rows,
+            tree_mode=parsed.tree,
+            full_account=self.full_account,
+        )
 
     def cmd_grep(self, args: list[str]) -> None:
         """Handle the 'grep' command in REPL using the open book."""

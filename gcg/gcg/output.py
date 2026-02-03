@@ -214,6 +214,7 @@ class OutputFormatter:
         self,
         rows: list[AccountRow],
         tree_mode: bool = False,
+        full_account: bool = True,
         file=None,
     ) -> None:
         """
@@ -222,6 +223,7 @@ class OutputFormatter:
         Args:
             rows: List of AccountRow objects
             tree_mode: Display as tree with indentation
+            full_account: Display full account path (default: True)
             file: Output file (default: stdout)
         """
         if file is None:
@@ -229,6 +231,17 @@ class OutputFormatter:
 
         if not rows:
             return
+        if not full_account:
+            rows = [
+                AccountRow(
+                    name=row.name.split(":")[-1],
+                    type=row.type,
+                    currency=row.currency,
+                    guid=row.guid,
+                    depth=row.depth,
+                )
+                for row in rows
+            ]
 
         if self.format_type == "json":
             self._format_accounts_json(rows, file)
@@ -371,7 +384,7 @@ class OutputFormatter:
             if tree_mode:
                 # Indent based on depth
                 indent = "  " * row.depth
-                name = indent + row.name.split(":")[-1]
+                name = indent + row.name
             else:
                 name = row.name
 

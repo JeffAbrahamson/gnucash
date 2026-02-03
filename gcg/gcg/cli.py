@@ -478,7 +478,11 @@ def cmd_accounts(args, config: Config) -> int:
                 show_header=not args.no_header,
                 show_guids=args.show_guids,
             )
-            formatter.format_accounts(rows, tree_mode=args.tree)
+            formatter.format_accounts(
+                rows,
+                tree_mode=args.tree,
+                full_account=args.full_account,
+            )
             return 0
 
     except BookOpenError as e:
