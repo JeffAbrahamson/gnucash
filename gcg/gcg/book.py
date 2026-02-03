@@ -6,10 +6,18 @@ Ensures read-only access to protect user data.
 """
 
 import sqlite3
+import warnings
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator, Optional
+
+# Suppress SQLAlchemy warnings from piecash's relationship mappings.
+# These warnings are about overlapping relationships in piecash's models
+# and are not actionable by gcg users.
+from sqlalchemy.exc import SAWarning
+
+warnings.filterwarnings("ignore", category=SAWarning)
 
 from piecash import open_book
 from piecash.core.book import Book
