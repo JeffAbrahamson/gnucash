@@ -1,3 +1,5 @@
+name: gnucash
+
 services:
   # Base service - all others extend this
   dev-base:
